@@ -13,11 +13,11 @@ class Paten:
     def http_trigger(self, name, methods: Union[list, str], route: str, auth_level: str = "function"):
         def _wrapper(function):
             self.function_bind_list.append({
-                "function_name": function.__name__,
+                "function_name": str(function.__name__),
                 "values": {
                     "authLevel": auth_level,
                     "type": "httpTrigger",
-                    "direction": "out",
+                    "direction": "in",
                     "name": name,
                     "route": route,
                     "methods": methods
@@ -25,8 +25,12 @@ class Paten:
             })
 
             self.function_info_list.append({
-                "scriptFile": "__init__.py",
-                "bindings": [d['values'] for d in self.function_bind_list if d['function_name'] == function.__name__]
+                "function_name": str(function.__name__),
+                "function_json": {
+                    "scriptFile": "__init__.py",
+                    "bindings": [d['values'] for d in self.function_bind_list if
+                                 d['function_name'] == str(function.__name__)]
+                }
             })
             return function
         return _wrapper
@@ -36,7 +40,7 @@ class Paten:
             _name = name if name is not None else "$return"
 
             self.function_bind_list.append({
-                "function_name": function.__name__,
+                "function_name": str(function.__name__),
                 "values": {
                     "type": "http",
                     "direction": "out",
@@ -51,7 +55,7 @@ class Paten:
             _connection = connection if connection is not None else "AzureWebJobsStorage"
 
             self.function_bind_list.append({
-                "function_name": function.__name__,
+                "function_name": str(function.__name__),
                 "values": {
                     "type": "queue",
                     "direction": "out",
