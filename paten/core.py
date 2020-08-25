@@ -46,6 +46,23 @@ class Paten:
             return function
         return _wrapper
 
+    def out_queue(self, name: str, queue_name: str, connection: Optional[str] = None):
+        def _wrapper(function):
+            _connection = connection if connection is not None else "AzureWebJobsStorage"
+
+            self.function_bind_list.append({
+                "function_name": function.__name__,
+                "values": {
+                    "type": "queue",
+                    "direction": "out",
+                    "name": name,
+                    "queueName": queue_name,
+                    "connection": "AzureWebJobsStorage"
+                }
+            })
+            return function
+        return _wrapper
+
     @staticmethod
     def _generate_function_json():
         return {
