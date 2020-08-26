@@ -3,12 +3,14 @@ from typing import Union, Optional
 
 class Paten:
 
-    def __init__(self, function_app_name: str):
+    def __init__(self, function_app_name: str, requirements: Optional[list] = None):
         self.function_app_name = function_app_name
         # manage function list including bindings
         self.function_info_list = []
         # manage bindings
         self.function_bind_list = []
+        # requirements
+        self.requirements = requirements
 
     def http_trigger(self, name, methods: Union[list, str], route: str, auth_level: str = "function"):
         def _wrapper(function):
@@ -71,4 +73,36 @@ class Paten:
     def _generate_function_json():
         return {
             "scriptFile": "__init__.py"
+        }
+
+    def _generate_requirements_txt(self) -> list:
+        if self.requirements is None:
+            return []
+        return self.requirements
+
+    @staticmethod
+    def _generate_host_json() -> dict:
+        return {
+            "version": "2.0",
+            "extensionBundle": {
+                "id": "Microsoft.Azure.Functions.ExtensionBundle",
+                "version": "[1.*, 2.0.0)"
+            }
+        }
+
+    @staticmethod
+    def _generate_local_settings_json() -> dict:
+        return {
+            "IsEncrypted": False,
+            "Values": {
+                "AzureWebJobsStorage": "",
+                "FUNCTIONS_WORKER_RUNTIME": "python"
+            }
+        }
+
+    @staticmethod
+    def _generate_proxies_json() -> dict:
+        return {
+            "$schema": "http://json.schemastore.org/proxies",
+            "proxies": {}
         }
