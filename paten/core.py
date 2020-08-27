@@ -1,6 +1,9 @@
+from inspect import signature
 import json
 import os
 from typing import Union, Optional
+
+from .error import ArgumentNameInvalidError
 
 
 class Paten:
@@ -16,6 +19,11 @@ class Paten:
 
     def http_trigger(self, name, methods: Union[list, str], route: str, auth_level: str = "function"):
         def _wrapper(function):
+            # check arguments
+            sig = signature(function)
+            if name not in sig.parameters:
+                raise ArgumentNameInvalidError(f"{name} not in {function.__name__}")
+
             self.function_bind_list.append({
                 "function_name": str(function.__name__),
                 "values": {
@@ -56,6 +64,11 @@ class Paten:
 
     def out_queue(self, name: str, queue_name: str, connection: Optional[str] = None):
         def _wrapper(function):
+            # check arguments
+            sig = signature(function)
+            if name not in sig.parameters:
+                raise ArgumentNameInvalidError(f"{name} not in {function.__name__}")
+
             _connection = connection if connection is not None else "AzureWebJobsStorage"
 
             self.function_bind_list.append({
