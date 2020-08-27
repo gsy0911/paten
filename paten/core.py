@@ -1,3 +1,5 @@
+import json
+import os
 from typing import Union, Optional
 
 
@@ -106,3 +108,23 @@ class Paten:
             "$schema": "http://json.schemastore.org/proxies",
             "proxies": {}
         }
+
+    def export(self):
+        with open("./out/proxies.json", "w") as f:
+            json.dump(self._generate_proxies_json(), f)
+
+        with open("./out/local.settings.json", "w") as f:
+            json.dump(self._generate_local_settings_json(), f)
+
+        with open("./out/host.json", "w") as f:
+            json.dump(self._generate_host_json(), f)
+
+        with open("./out/requirements.txt", mode='w') as f:
+            f.writelines('\n'.join(self._generate_requirements_txt()))
+
+        for func in self.function_info_list:
+            output_dir = f"./out/{func['function_name']}"
+            os.makedirs(output_dir, exist_ok=True)
+            out: dict = func['function_json']
+            with open(f'{output_dir}/function.json', 'w') as f:
+                json.dump(out, f)
