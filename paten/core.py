@@ -111,6 +111,38 @@ class Paten:
 
         return _wrapper
 
+    def blob_trigger(self, name: str, path: str, connection: Optional[str] = None):
+        def _wrapper(function):
+            sig = signature(function)
+            if name not in sig.parameters:
+                raise ArgumentNameInvalidError(f"{name} not in {function.__name__}")
+
+            _connection = connection if connection is not None else "AzureWebJobsStorage"
+
+            self.function_bind_list.append({
+                "function_name": str(function.__name__),
+                "values": {
+                    "name": name,
+                    "type": "blobTrigger",
+                    "direction": "in",
+                    "path": path,
+                    "connection": _connection
+                }
+            })
+
+            self.function_info_list.append({
+                "function_name": str(function.__name__),
+                "function_json": {
+                    "scriptFile": "__init__.py",
+                    "entryPoint": str(function.__name__),
+                    "bindings": [d['values'] for d in self.function_bind_list if
+                                 d['function_name'] == str(function.__name__)]
+                }
+            })
+            return function
+
+        return _wrapper
+
     def out_http(self, name: Optional[str] = None):
         def _wrapper(function):
             _name = name if name is not None else "$return"
