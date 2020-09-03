@@ -1,7 +1,9 @@
 import importlib
+import subprocess
 import sys
 
 from paten import Paten
+from paten.error import AzureFunctionsCoreToolsNotFoundError
 
 
 class CliFactory:
@@ -24,3 +26,24 @@ class CliFactory:
                       ) % (getattr(e, 'filename'), e.lineno, e.text, e.msg)
             raise RuntimeError(message)
         return paten_app
+
+    @staticmethod
+    def _check_required_library_installed():
+        """
+        `which` command returns 127, if specified command not found.
+
+        Returns:
+            None
+
+        Raises:
+            AzureFunctionsCoreToolsNotFoundError
+        """
+        check_command = ["which", "func"]
+        try:
+            _ = subprocess.run(
+                check_command,
+                check=True,
+                stderr=subprocess.PIPE
+            )
+        except subprocess.CalledProcessError:
+            raise AzureFunctionsCoreToolsNotFoundError("`Azure Functions Core Tools` is not found.")
