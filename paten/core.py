@@ -154,3 +154,13 @@ class Paten:
 
             # 関数ファイルの配置
             copyfile("app.py", f"{output_dir}/__init__.py")
+
+    def plan(self) -> list:
+        output_list = ["app.py", "|"]
+        for func in self.function_info_list:
+            output_list.append(f"|-{func['function_name']}")
+            for bindings in func['function_json']['bindings']:
+                output_list.append(f"|  |-[{bindings['type']}] {bindings['name']}")
+            output_list.append("|")
+
+        return output_list
