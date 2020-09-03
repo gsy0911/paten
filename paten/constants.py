@@ -34,6 +34,12 @@ def example_timer_function(timer):
 @app.queue_trigger("msg", queue_name="example-queue")
 def example_queue_trigger(msg: func.Out[str]):
     pass
+
+
+@app.blob_trigger("blob", path="example/{name}.csv")
+@app.out_queue("msg", queue_name='example_queue')
+def example_blob(blob: func.InputStream, msg: func.Out[str]):
+    file_name = blob.name
 """
 
 
