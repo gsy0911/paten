@@ -2,6 +2,7 @@ from inspect import signature
 import json
 import os
 from typing import Union, Optional
+from shutil import copyfile
 
 from .error import ArgumentNameInvalidError
 
@@ -40,6 +41,7 @@ class Paten:
                 "function_name": str(function.__name__),
                 "function_json": {
                     "scriptFile": "__init__.py",
+                    "entryPoint": str(function.__name__),
                     "bindings": [d['values'] for d in self.function_bind_list if
                                  d['function_name'] == str(function.__name__)]
                 }
@@ -78,7 +80,7 @@ class Paten:
                     "direction": "out",
                     "name": name,
                     "queueName": queue_name,
-                    "connection": "AzureWebJobsStorage"
+                    "connection": _connection
                 }
             })
             return function
@@ -123,21 +125,42 @@ class Paten:
         }
 
     def export(self):
-        with open("./out/proxies.json", "w") as f:
+        output_dir = f"./.paten"
+        os.makedirs(output_dir, exist_ok=True)
+
+        # requirementsファイルの複製
+        copyfile("requirements.txt", f"./.paten/requirements.txt")
+
+        with open("./.paten/proxies.json", "w") as f:
             json.dump(self._generate_proxies_json(), f)
 
-        with open("./out/local.settings.json", "w") as f:
+        with open("./.paten/local.settings.json", "w") as f:
             json.dump(self._generate_local_settings_json(), f)
 
-        with open("./out/host.json", "w") as f:
+        with open("./.paten/host.json", "w") as f:
             json.dump(self._generate_host_json(), f)
 
-        with open("./out/requirements.txt", mode='w') as f:
+        with open("./.paten/requirements.txt", mode='w') as f:
             f.writelines('\n'.join(self._generate_requirements_txt()))
 
         for func in self.function_info_list:
-            output_dir = f"./out/{func['function_name']}"
+            output_dir = f"./.paten/{func['function_name']}"
             os.makedirs(output_dir, exist_ok=True)
+
+            # function.jsonの取得と配置
             out: dict = func['function_json']
             with open(f'{output_dir}/function.json', 'w') as f:
                 json.dump(out, f)
+
+            # 関数ファイルの配置
+            copyfile("app.py", f"{output_dir}/__init__.py")
+
+    def plan(self) -> list:
+        output_list = ["app.py", "|"]
+        for func in self.function_info_list:
+            output_list.append(f"|-{func['function_name']}")
+            for bindings in func['function_json']['bindings']:
+                output_list.append(f"|  |-[{bindings['type']}] {bindings['name']}")
+            output_list.append("|")
+
+        return output_list
