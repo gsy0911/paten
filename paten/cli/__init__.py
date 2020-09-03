@@ -30,10 +30,15 @@ def deploy(ctx):
 @cmd.command("build")
 @click.pass_context
 def build(ctx):
-    click.echo('start to build contents')
     cli_factory: CliFactory = ctx.obj['factory']
     paten_app = cli_factory.load_paten_app()
     paten_app.export()
+
+    output_list = paten_app.plan()
+    for s in output_list:
+        click.echo(s)
+
+    click.echo("\nyour function app is successfully built to `./.paten/*`")
 
 
 @cmd.command("local")
