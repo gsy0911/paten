@@ -25,16 +25,18 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="slackapidecorator",
+    name="paten",
     version=VERSION,
     author="gsy0911",
     author_email="yoshiki0911@gmail.com",
-    description="slack api decorator",
+    description="paten",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/gsy0911/slack-api-decorator",
+    url="https://github.com/gsy0911/paten",
     packages=setuptools.find_packages(),
-    install_requires=[],
+    install_requires=[
+        "click"
+    ],
     license="MIT",
     entry_points={
         'console_scripts': [
@@ -51,5 +53,5 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License"
     ],
     python_requires='>=3.7',
-    keywords=["slack", "slack-api", "slash-command", "event-subscription"]
+    keywords=["azure", "azure functions"]
 )
