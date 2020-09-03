@@ -29,3 +29,20 @@ def test_http_trigger_name_error():
         @app.out_http()
         def example(req, arg_name_different):
             pass
+
+
+def test_timer_trigger():
+    app = Paten("pytest")
+
+    @app.timer_trigger("timer", schedule="0 0 19 * * *")
+    def example(timer):
+        pass
+
+
+def test_timer_trigger_name_error():
+    app = Paten("pytest")
+
+    with pytest.raises(ArgumentNameInvalidError):
+        @app.timer_trigger("timer", schedule="0 0 19 * * *")
+        def example(timer_name_different):
+            pass
