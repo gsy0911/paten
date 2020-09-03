@@ -76,6 +76,39 @@ class Paten:
                 }
             })
             return function
+
+        return _wrapper
+
+    def queue_trigger(self, name: str, queue_name: str, connection: Optional[str] = None):
+        def _wrapper(function):
+            sig = signature(function)
+            if name not in sig.parameters:
+                raise ArgumentNameInvalidError(f"{name} not in {function.__name__}")
+
+            _connection = connection if connection is not None else "AzureWebJobsStorage"
+
+            self.function_bind_list.append({
+                "function_name": str(function.__name__),
+                "values": {
+                    "type": "queueTrigger",
+                    "direction": "in",
+                    "name": name,
+                    "queueName": queue_name,
+                    "connection": _connection
+                }
+            })
+
+            self.function_info_list.append({
+                "function_name": str(function.__name__),
+                "function_json": {
+                    "scriptFile": "__init__.py",
+                    "entryPoint": str(function.__name__),
+                    "bindings": [d['values'] for d in self.function_bind_list if
+                                 d['function_name'] == str(function.__name__)]
+                }
+            })
+            return function
+
         return _wrapper
 
     def out_http(self, name: Optional[str] = None):
