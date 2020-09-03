@@ -2,6 +2,7 @@ from inspect import signature
 import json
 import os
 from typing import Union, Optional
+from shutil import copyfile
 
 from .error import ArgumentNameInvalidError
 
@@ -40,6 +41,7 @@ class Paten:
                 "function_name": str(function.__name__),
                 "function_json": {
                     "scriptFile": "__init__.py",
+                    "entryPoint": str(function.__name__),
                     "bindings": [d['values'] for d in self.function_bind_list if
                                  d['function_name'] == str(function.__name__)]
                 }
@@ -123,6 +125,9 @@ class Paten:
         }
 
     def export(self):
+        output_dir = f"./out"
+        os.makedirs(output_dir, exist_ok=True)
+
         with open("./out/proxies.json", "w") as f:
             json.dump(self._generate_proxies_json(), f)
 
@@ -138,6 +143,11 @@ class Paten:
         for func in self.function_info_list:
             output_dir = f"./out/{func['function_name']}"
             os.makedirs(output_dir, exist_ok=True)
+
+            # function.jsonの取得と配置
             out: dict = func['function_json']
             with open(f'{output_dir}/function.json', 'w') as f:
                 json.dump(out, f)
+
+            # 関数ファイルの配置
+            copyfile("app.py", f"{output_dir}/__init__.py")
