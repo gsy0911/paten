@@ -80,7 +80,7 @@ class Paten:
                     "direction": "out",
                     "name": name,
                     "queueName": queue_name,
-                    "connection": "AzureWebJobsStorage"
+                    "connection": _connection
                 }
             })
             return function
