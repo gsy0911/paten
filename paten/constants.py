@@ -20,3 +20,18 @@ def example_http_queue_function(req, arg_name):
 GITIGNORE = """
 .paten/*
 """
+
+
+WELCOME_PROMPT = r"""
+
+ _____             _______  ______  _   _
+|  __ \     /\    |__   __||  ____|| \ | |
+| |__) |   /  \      | |   | |__   |  \| |
+|  ___/   / /\ \     | |   |  __|  | . ` |
+| |      / ____ \    | |   | |____ | |\  |
+|_|     /_/    \_\   |_|   |______||_| \_|
+
+
+Welcome PATEN.
+Your function app `%s` is generated
+"""
