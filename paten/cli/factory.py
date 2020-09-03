@@ -42,8 +42,39 @@ class CliFactory:
         try:
             _ = subprocess.run(
                 check_command,
-                check=True,
-                stderr=subprocess.PIPE
+                check=True
             )
         except subprocess.CalledProcessError:
             raise AzureFunctionsCoreToolsNotFoundError("`Azure Functions Core Tools` is not found.")
+
+    def deploy(self, prompter, function_app_name: str):
+        prompter.echo(f"deploy start at {self.function_app_dir}")
+        deploy_command = ["func", "azure", "functionapp", "publish", function_app_name]
+
+        try:
+            self._check_required_library_installed()
+
+            process = subprocess.run(
+                deploy_command,
+                cwd=".paten",
+                check=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE)
+            stdout = process.stdout.decode()
+            if stdout:
+                prompter.echo(stdout)
+
+            stderr = process.stderr.decode()
+            if stderr:
+                prompter.echo(stderr)
+        except subprocess.CalledProcessError as e:
+            prompter.echo(e)
+            stdout = e.stdout.decode()
+            if stdout:
+                prompter.echo(stdout)
+            stderr = e.stderr.decode()
+            if stderr:
+                prompter.echo(stderr)
+
+        except AzureFunctionsCoreToolsNotFoundError as e:
+            prompter.echo(e)
