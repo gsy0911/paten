@@ -51,3 +51,16 @@ The files are generated in `./{project_name}/.paten`
 ```shell script
 $ paten build
 ```
+
+## support bindings
+
+| services | trigger | in | out | 
+|:--:|:--:|:--:|:--:|
+| http | O | - | O |
+| blob | O | X | X |
+| queue | O | X | 0 |
+| timer | O | - | - |
+ 
+* O: supported
+* X: not supported yet
+* -: officially not supported
