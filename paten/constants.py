@@ -5,7 +5,7 @@ from paten import Paten
 app = Paten('%s')
 
 
-@app.http_trigger('req', methods=['GET'], route='/')
+@app.http_trigger('req', methods=['GET'], route='/http')
 @app.out_http()
 def example_http_function(req: func.HttpRequest) -> func.HttpResponse:
     name = req.params.get('name')
@@ -14,7 +14,7 @@ def example_http_function(req: func.HttpRequest) -> func.HttpResponse:
     return func.HttpResponse(name)
 
 
-@app.http_trigger('req', methods=['GET'], route='/')
+@app.http_trigger('req', methods=['GET'], route='/queue')
 @app.out_queue('your_queue', queue_name='example_queue')
 @app.out_http()
 def example_http_queue_function(req: func.HttpRequest, your_queue: func.Out[str]) -> func.HttpResponse:
