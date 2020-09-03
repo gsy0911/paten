@@ -35,7 +35,8 @@ setuptools.setup(
     url="https://github.com/gsy0911/paten",
     packages=setuptools.find_packages(),
     install_requires=[
-        "click"
+        "click",
+        "azure-functions"
     ],
     license="MIT",
     entry_points={
