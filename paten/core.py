@@ -125,23 +125,26 @@ class Paten:
         }
 
     def export(self):
-        output_dir = f"./out"
+        output_dir = f"./.paten"
         os.makedirs(output_dir, exist_ok=True)
 
-        with open("./out/proxies.json", "w") as f:
+        # requirementsファイルの複製
+        copyfile("requirements.txt", f"./.paten/requirements.txt")
+
+        with open("./.paten/proxies.json", "w") as f:
             json.dump(self._generate_proxies_json(), f)
 
-        with open("./out/local.settings.json", "w") as f:
+        with open("./.paten/local.settings.json", "w") as f:
             json.dump(self._generate_local_settings_json(), f)
 
-        with open("./out/host.json", "w") as f:
+        with open("./.paten/host.json", "w") as f:
             json.dump(self._generate_host_json(), f)
 
-        with open("./out/requirements.txt", mode='w') as f:
+        with open("./.paten/requirements.txt", mode='w') as f:
             f.writelines('\n'.join(self._generate_requirements_txt()))
 
         for func in self.function_info_list:
-            output_dir = f"./out/{func['function_name']}"
+            output_dir = f"./.paten/{func['function_name']}"
             os.makedirs(output_dir, exist_ok=True)
 
             # function.jsonの取得と配置
