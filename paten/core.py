@@ -49,6 +49,35 @@ class Paten:
             return function
         return _wrapper
 
+    def timer_trigger(self, name: str, schedule: str):
+        def _wrapper(function):
+
+            sig = signature(function)
+            if name not in sig.parameters:
+                raise ArgumentNameInvalidError(f"{name} not in {function.__name__}")
+
+            self.function_bind_list.append({
+                "function_name": str(function.__name__),
+                "values": {
+                    "type": "timerTrigger",
+                    "direction": "in",
+                    "name": name,
+                    "schedule": schedule
+                }
+            })
+
+            self.function_info_list.append({
+                "function_name": str(function.__name__),
+                "function_json": {
+                    "scriptFile": "__init__.py",
+                    "entryPoint": str(function.__name__),
+                    "bindings": [d['values'] for d in self.function_bind_list if
+                                 d['function_name'] == str(function.__name__)]
+                }
+            })
+            return function
+        return _wrapper
+
     def out_http(self, name: Optional[str] = None):
         def _wrapper(function):
             _name = name if name is not None else "$return"
