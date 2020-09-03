@@ -29,6 +29,11 @@ def example_http_queue_function(req: func.HttpRequest, your_queue: func.Out[str]
 @app.timer_trigger("timer", schedule="0 0 19 * * *")
 def example_timer_function(timer):
     pass
+
+
+@app.queue_trigger("msg", queue_name="example-queue")
+def example_queue_trigger(msg: func.Out[str]):
+    pass
 """
 
 

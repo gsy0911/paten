@@ -46,3 +46,20 @@ def test_timer_trigger_name_error():
         @app.timer_trigger("timer", schedule="0 0 19 * * *")
         def example(timer_name_different):
             pass
+
+
+def test_queue_trigger():
+    app = Paten("pytest")
+
+    @app.queue_trigger("msg", queue_name="example-queue")
+    def example(msg):
+        pass
+
+
+def test_queue_trigger_name_error():
+    app = Paten("pytest")
+
+    with pytest.raises(ArgumentNameInvalidError):
+        @app.queue_trigger("msg", queue_name="example-queue")
+        def example(msg_name_different):
+            pass
