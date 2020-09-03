@@ -24,7 +24,11 @@ def example_http_queue_function(req: func.HttpRequest, your_queue: func.Out[str]
     
     # response
     return func.HttpResponse(name)
-    
+
+
+@app.timer_trigger("timer", schedule="0 0 19 * * *")
+def example_timer_function(timer):
+    pass
 """
 
 
