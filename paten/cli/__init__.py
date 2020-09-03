@@ -2,7 +2,7 @@ import os
 
 import click
 
-from paten.constants import TEMPLATE_APP, GITIGNORE
+from paten.constants import TEMPLATE_APP, GITIGNORE, WELCOME_PROMPT
 from .factory import CliFactory
 
 
@@ -22,6 +22,9 @@ def cmd(ctx, function_app_dir: str):
 @click.pass_context
 def deploy(ctx):
     click.echo('start to deploy')
+    cli_factory: CliFactory = ctx.obj['factory']
+    paten_app = cli_factory.load_paten_app()
+    paten_app.export()
 
 
 @cmd.command("build")
@@ -34,8 +37,26 @@ def build(ctx):
 
 
 @cmd.command("local")
-def local():
-    click.echo('hosting at local')
+@click.option('--host', default='127.0.0.1')
+@click.option('--port', default=8000, type=click.INT)
+@click.pass_context
+def local(ctx, host='127.0.0.1', port=8000):
+    click.echo(f'hosting at local at {host}:{port}')
+
+    cli_factory: CliFactory = ctx.obj['factory']
+    paten_app = cli_factory.load_paten_app()
+
+
+@cmd.command("plan")
+@click.pass_context
+def plan(ctx):
+    cli_factory: CliFactory = ctx.obj['factory']
+    paten_app = cli_factory.load_paten_app()
+    output_list = paten_app.plan()
+    for s in output_list:
+        click.echo(s)
+
+    click.echo("\ntype `paten build` to generate files to `./.paten/*`")
 
 
 def _create_new_project_skeleton(function_app_name: str):
@@ -52,7 +73,7 @@ def _create_new_project_skeleton(function_app_name: str):
 @cmd.command("new-project")
 @click.argument('function_app_name')
 def new_project(function_app_name: str):
-    click.echo('create new project')
+    click.echo(WELCOME_PROMPT % function_app_name)
     _create_new_project_skeleton(function_app_name=function_app_name)
 
 
