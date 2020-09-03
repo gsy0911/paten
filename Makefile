@@ -1,4 +1,3 @@
-
 .PHONY: help
 help:
 	@echo " == execute python test on some python .venv == "
@@ -16,9 +15,6 @@ help:
 	@echo "deploy: upload to pypi"
 	@echo "test-deploy: upload to pypi"
 	@echo "test-python: test with pytest"
-	@echo "ci: execute circleCI on local"
-
-
 
 .PHONY: test-python
 test-python:
