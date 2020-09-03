@@ -47,11 +47,11 @@ class Paten:
                 }
             })
             return function
+
         return _wrapper
 
     def timer_trigger(self, name: str, schedule: str):
         def _wrapper(function):
-
             sig = signature(function)
             if name not in sig.parameters:
                 raise ArgumentNameInvalidError(f"{name} not in {function.__name__}")
@@ -124,6 +124,7 @@ class Paten:
                 }
             })
             return function
+
         return _wrapper
 
     def out_queue(self, name: str, queue_name: str, connection: Optional[str] = None):
@@ -146,6 +147,7 @@ class Paten:
                 }
             })
             return function
+
         return _wrapper
 
     @staticmethod
