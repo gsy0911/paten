@@ -90,25 +90,11 @@ class Paten:
             schedule: The time when the Function App is invoked.
         
         """
-        def _wrapper(function):
-            # check arguments
-            self._check_argument(function=function, arg_name=name)
-
-            handler_name = str(function.__name__)
-            self.binding_manager.register_binding(
-                Binding(
-                    handler_name=handler_name,
-                    name=name,
-                    _type="timerTrigger",
-                    direction="in",
-                    schedule=schedule
-                )
-            )
-            
-            self.binding_manager.register_function_app(handler_name=handler_name)
-            return function
-
-        return _wrapper
+        return self.trigger(
+            name=name,
+            _type="timerTrigger",
+            schedule=schedule
+        )
 
     def queue_trigger(self, name: str, queue_name: str, connection: Optional[str] = None):
         """
