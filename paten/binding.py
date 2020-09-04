@@ -4,14 +4,21 @@ Classes to mange bindings for `function.json`.
 """
 
 
-class BindigsRegisteration:
+class BindigsManager:
     def __init__(self):
+        # manage function list including bindings
+        self.function_app_list = []
+        # manage bindings
         self.bindigs_list = []
     
-    def register(self, bindings: Bindings):
+    def register_bindings(self, bindings: Bindings):
         self.bindigs_list.append(bindings)
-        
-    def get_by_handler_name(handler_name: str) -> dict:
+
+    def register_function_app(self, handler_name: str):
+        function_app_dict = self.get_bindings_by_handler_name(handler_name)
+        self.function_app_list.append(function_app_dict)
+
+    def get_bindings_by_handler_name(handler_name: str) -> dict:
         return {
             "function_name": handler_name,
             "function_json": {
