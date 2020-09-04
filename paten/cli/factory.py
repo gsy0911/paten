@@ -38,6 +38,17 @@ class CliFactory:
         Raises:
             AzureFunctionsCoreToolsNotFoundError
         """
+        check_command = ["which", "az"]
+        try:
+            _ = subprocess.run(
+                check_command,
+                check=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE
+            )
+        except subprocess.CalledProcessError:
+            raise AzureFunctionsCoreToolsNotFoundError("`Azure CLI` is not found.")
+
         check_command = ["which", "func"]
         try:
             _ = subprocess.run(
