@@ -43,6 +43,25 @@ class Paten:
         if arg_name not in sig.parameters:
             raise ArgumentNameInvalidError(f"{arg_name} not in {function.__name__}")
 
+    def trigger(self, name: str, _type: str, **kwargs):
+        def _wrapper(function):
+            self._check_argument(function=function, arg_name=name)
+
+            handler_name = str(function.__name__)
+            self.binding_manager.register_binding(
+                Binding(
+                    handler_name=handler_name,
+                    name=name,
+                    _type=_type,
+                    direction="in",
+                    **kwargs
+                )
+            )
+            self.binding_manager.register_function_app(handler_name=handler_name)
+            return function
+
+        return _wrapper
+
     def http_trigger(self, name, methods: Union[list, str], route: str, auth_level: str = "function"):
         """
         Add HttpTrigger.
