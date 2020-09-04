@@ -62,7 +62,7 @@ class Paten:
 
         return _wrapper
 
-    def http_trigger(self, name, methods: Union[list, str], route: str, auth_level: str = "function"):
+    def http_trigger(self, name: str, methods: Union[list, str], route: str, auth_level: str = "function"):
         """
         Add HttpTrigger.
         
@@ -73,27 +73,13 @@ class Paten:
             auth_level: Authentication level for the Function App, function, anonymous are acceptable.
         
         """
-        def _wrapper(function):
-            # check arguments
-            self._check_argument(function=function, arg_name=name)
-            
-            handler_name = str(function.__name__)
-            self.binding_manager.register_binding(
-                Binding(
-                    handler_name=handler_name,
-                    name=name,
-                    _type="httpTrigger",
-                    direction="in",
-                    route=route,
-                    methods=methods,
-                    authLevel=auth_level
-                )
-            )
-            
-            self.binding_manager.register_function_app(handler_name=handler_name)
-            return function
-
-        return _wrapper
+        return self.trigger(
+            name=name,
+            _type="httpTrigger",
+            route=route,
+            methods=methods,
+            authLevel=auth_level
+        )
 
     def timer_trigger(self, name: str, schedule: str):
         """
