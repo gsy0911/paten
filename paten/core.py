@@ -221,37 +221,43 @@ class Paten:
         }
 
     def export(self):
-        output_dir = f"./.paten"
-        os.makedirs(output_dir, exist_ok=True)
+        """
+        Export files required for deploying Azure Functions.
+        Export directory is `./.paten`.
+        
+        """
+        file_parent_dir = f"./.paten"
+        os.makedirs(file_parent_dir, exist_ok=True)
 
         # requirementsファイルの複製
-        copyfile("requirements.txt", f"./.paten/requirements.txt")
+        copyfile("requirements.txt", f"{file_parent_dir}/requirements.txt")
 
-        with open("./.paten/proxies.json", "w") as f:
+        with open(f"{file_parent_dir}/proxies.json", "w") as f:
             json.dump(self._generate_proxies_json(), f)
 
-        with open("./.paten/local.settings.json", "w") as f:
+        with open(f"{file_parent_dir}/local.settings.json", "w") as f:
             json.dump(self._generate_local_settings_json(), f)
 
-        with open("./.paten/host.json", "w") as f:
+        with open(f"{file_parent_dir}/host.json", "w") as f:
             json.dump(self._generate_host_json(), f)
 
-        with open("./.paten/requirements.txt", mode='w') as f:
-            f.writelines('\n'.join(self._generate_requirements_txt()))
-
         for func in self.function_info_list:
-            output_dir = f"./.paten/{func['function_name']}"
-            os.makedirs(output_dir, exist_ok=True)
+            function_app_dir = f"{file_parent_dir}/{func['function_name']}"
+            os.makedirs(function_app_dir, exist_ok=True)
 
             # function.jsonの取得と配置
             out: dict = func['function_json']
-            with open(f'{output_dir}/function.json', 'w') as f:
+            with open(f'{function_app_dir}/function.json', 'w') as f:
                 json.dump(out, f)
 
             # 関数ファイルの配置
-            copyfile("app.py", f"{output_dir}/__init__.py")
+            copyfile("app.py", f"{function_app_dir}/__init__.py")
 
     def plan(self) -> list:
+        """
+        Display function app to deploy.
+        
+        """
         output_list = ["app.py", "|"]
         for func in self.function_info_list:
             output_list.append(f"|-{func['function_name']}")
