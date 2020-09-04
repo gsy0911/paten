@@ -22,6 +22,24 @@ class Paten:
         self.function_info_list = []
         # manage bindings
         self.function_bind_list = []
+        
+    def _check_argument(function: callable, arg_name: str) -> None:
+        """
+        Check whether the `arg_name` in the parameter of the `function`.
+        
+        Args:
+            function: function to check
+            arg_name: argument name
+        
+        Raises:
+            ArgumentNameInvalidError: When `arg_name` is not found in the paramater of the `function`
+        
+        """
+        # check arguments
+        sig = signature(function)
+        if arg_name not in sig.parameters:
+            raise ArgumentNameInvalidError(f"{arg_name} not in {function.__name__}")
+        
 
     def http_trigger(self, name, methods: Union[list, str], route: str, auth_level: str = "function"):
         """
@@ -36,9 +54,7 @@ class Paten:
         """
         def _wrapper(function):
             # check arguments
-            sig = signature(function)
-            if name not in sig.parameters:
-                raise ArgumentNameInvalidError(f"{name} not in {function.__name__}")
+            self._check_argument(function=function, arg_name=name)
 
             self.function_bind_list.append({
                 "function_name": str(function.__name__),
@@ -75,9 +91,8 @@ class Paten:
         
         """
         def _wrapper(function):
-            sig = signature(function)
-            if name not in sig.parameters:
-                raise ArgumentNameInvalidError(f"{name} not in {function.__name__}")
+            # check arguments
+            self._check_argument(function=function, arg_name=name)
 
             self.function_bind_list.append({
                 "function_name": str(function.__name__),
@@ -113,9 +128,8 @@ class Paten:
         
         """
         def _wrapper(function):
-            sig = signature(function)
-            if name not in sig.parameters:
-                raise ArgumentNameInvalidError(f"{name} not in {function.__name__}")
+            # check arguments
+            self._check_argument(function=function, arg_name=name)
 
             _connection = connection if connection is not None else "AzureWebJobsStorage"
 
@@ -154,9 +168,8 @@ class Paten:
         
         """
         def _wrapper(function):
-            sig = signature(function)
-            if name not in sig.parameters:
-                raise ArgumentNameInvalidError(f"{name} not in {function.__name__}")
+            # check arguments
+            self._check_argument(function=function, arg_name=name)
 
             _connection = connection if connection is not None else "AzureWebJobsStorage"
 
@@ -203,9 +216,7 @@ class Paten:
     def out_queue(self, name: str, queue_name: str, connection: Optional[str] = None):
         def _wrapper(function):
             # check arguments
-            sig = signature(function)
-            if name not in sig.parameters:
-                raise ArgumentNameInvalidError(f"{name} not in {function.__name__}")
+            self._check_argument(function=function, arg_name=name)
 
             _connection = connection if connection is not None else "AzureWebJobsStorage"
 
