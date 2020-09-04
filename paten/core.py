@@ -10,6 +10,13 @@ from .error import ArgumentNameInvalidError
 class Paten:
 
     def __init__(self, function_app_name: str):
+        """
+        set function-app-name for the Azure Functions.
+        
+        Args:
+            function_app_name: A name for the Azure Functions to deploy.
+        
+        """
         self.function_app_name = function_app_name
         # manage function list including bindings
         self.function_info_list = []
@@ -17,6 +24,16 @@ class Paten:
         self.function_bind_list = []
 
     def http_trigger(self, name, methods: Union[list, str], route: str, auth_level: str = "function"):
+        """
+        Add HttpTrigger.
+        
+        Args:
+            name: A name for the argument, usually `req`.
+            methods: Accepted method name.
+            route: Route name for the Function App.
+            auth_level: Authentication level for the Function App, function, anonymous are acceptable.
+        
+        """
         def _wrapper(function):
             # check arguments
             sig = signature(function)
@@ -49,6 +66,14 @@ class Paten:
         return _wrapper
 
     def timer_trigger(self, name: str, schedule: str):
+        """
+        Add TimerTrigger.
+        
+        Args:
+            name: A name for the argument, usually `timer`.
+            schedule: The time when the Function App is invoked.
+        
+        """
         def _wrapper(function):
             sig = signature(function)
             if name not in sig.parameters:
@@ -78,6 +103,15 @@ class Paten:
         return _wrapper
 
     def queue_trigger(self, name: str, queue_name: str, connection: Optional[str] = None):
+        """
+        Add QueueTrigger.
+        
+        Args:
+            name: A name for the argument, usually `msg`.
+            queue_name: A name for the Queue Storage where the `msg` enqueue or dequeue.
+            connection: A connection for the Queue Storage, by default `AzureWebJobsStorage`.
+        
+        """
         def _wrapper(function):
             sig = signature(function)
             if name not in sig.parameters:
@@ -110,6 +144,15 @@ class Paten:
         return _wrapper
 
     def blob_trigger(self, name: str, path: str, connection: Optional[str] = None):
+        """
+        Add BlobTrigger.
+        
+        Args:
+            name: A name for the argument, usually `blob`.
+            path: A path for the Blob Storage to invoke the Function App.
+            connection: A connection for the Blob Storage, by default `AzureWebJobsStorage`.
+        
+        """
         def _wrapper(function):
             sig = signature(function)
             if name not in sig.parameters:
