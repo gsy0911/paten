@@ -124,28 +124,13 @@ class Paten:
             connection: A connection for the Blob Storage, by default `AzureWebJobsStorage`.
         
         """
-        def _wrapper(function):
-            # check arguments
-            self._check_argument(function=function, arg_name=name)
-
-            _connection = connection if connection is not None else "AzureWebJobsStorage"
-
-            handler_name = str(function.__name__)
-            self.binding_manager.register_binding(
-                Binding(
-                    handler_name=handler_name,
-                    name=name,
-                    _type="blobTrigger",
-                    direction="in",
-                    path=path,
-                    connection=_connection
-                )
-            )
-            
-            self.binding_manager.register_function_app(handler_name=handler_name)
-            return function
-
-        return _wrapper
+        _connection = connection if connection is not None else "AzureWebJobsStorage"
+        return self.trigger(
+            name=name,
+            _type="blobTrigger",
+            path=path,
+            connection=_connection
+        )
 
     def in_bind(self, name: str, _type: str, **kwargs):
         def _wrapper(function):
