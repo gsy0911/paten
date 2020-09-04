@@ -9,14 +9,12 @@ from .error import ArgumentNameInvalidError
 
 class Paten:
 
-    def __init__(self, function_app_name: str, requirements: Optional[list] = None):
+    def __init__(self, function_app_name: str):
         self.function_app_name = function_app_name
         # manage function list including bindings
         self.function_info_list = []
         # manage bindings
         self.function_bind_list = []
-        # requirements
-        self.requirements = requirements
 
     def http_trigger(self, name, methods: Union[list, str], route: str, auth_level: str = "function"):
         def _wrapper(function):
@@ -187,11 +185,6 @@ class Paten:
         return {
             "scriptFile": "__init__.py"
         }
-
-    def _generate_requirements_txt(self) -> list:
-        if self.requirements is None:
-            return []
-        return self.requirements
 
     @staticmethod
     def _generate_host_json() -> dict:
