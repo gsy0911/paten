@@ -190,7 +190,23 @@ class Paten:
 
         return _wrapper
 
-    def out(self, name: str, _type: str, **kwargs):
+    def in_bind(self, name: str, _type: str, **kwargs):
+        def _wrapper(function):
+            handler_name = str(function.__name__)
+            self.binding_manager.register_binding(
+                Binding(
+                    handler_name=handler_name,
+                    name=name,
+                    _type=_type,
+                    direction="in",
+                    **kwargs
+                )
+            )
+            return function
+
+        return _wrapper
+
+    def out_bind(self, name: str, _type: str, **kwargs):
         def _wrapper(function):
             handler_name = str(function.__name__)
             self.binding_manager.register_binding(
