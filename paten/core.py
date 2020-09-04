@@ -71,7 +71,7 @@ class Paten:
                 )
             )
             
-            self.bindig_manger.register_function_app(handler_name=handler_name)
+            self.binding_manger.register_function_app(handler_name=handler_name)
             return function
 
         return _wrapper
@@ -100,7 +100,7 @@ class Paten:
                 )
             )
             
-            self.bindigs_manger.register_function_app(handler_name=handler_name)
+            self.binding_manger.register_function_app(handler_name=handler_name)
             return function
 
         return _wrapper
@@ -133,7 +133,7 @@ class Paten:
                 )
             )
             
-            self.bindigs_manger.register_function_app(handler_name=handler_name)
+            self.binding_manger.register_function_app(handler_name=handler_name)
             return function
 
         return _wrapper
@@ -166,7 +166,7 @@ class Paten:
                 )
             )
             
-            self.bindigs_manger.register_function_app(handler_name=handler_name)
+            self.binding_manger.register_function_app(handler_name=handler_name)
             return function
 
         return _wrapper
