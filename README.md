@@ -3,12 +3,12 @@
 [![pytest](https://github.com/gsy0911/paten/workflows/pytest/badge.svg)](https://github.com/gsy0911/paten/actions?query=workflow%3Apytest)
 [![codecov](https://codecov.io/gh/gsy0911/paten/branch/master/graph/badge.svg)](https://codecov.io/gh/gsy0911/paten)
 [![PythonVersion](https://img.shields.io/badge/python-3.7|3.8-blue.svg)](https://www.python.org/downloads/release/python-377/)
-[![PiPY](https://img.shields.io/badge/pypi-0.1.0-blue.svg)](https://pypi.org/project/paten/)
+[![PiPY](https://img.shields.io/badge/pypi-0.1.1-blue.svg)](https://pypi.org/project/paten/)
 
 
 Paten is a framework for azure functions written in Python. Paten provides:
 
-* A command line tool for creating, building azure functions.
+* A command line tool for creating, building, deploying azure functions.
 * A decorator based API integrated with in/out bindings.
 
 ## install
