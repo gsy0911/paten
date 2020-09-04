@@ -206,8 +206,10 @@ class Paten:
 
         return _wrapper
 
-    def out_bind(self, name: str, _type: str, **kwargs):
+    def out_bind(self, name: str, _type: str, is_arg_name_check: bool = True, **kwargs):
         def _wrapper(function):
+            if is_arg_name_check:
+                self._check_argument(function=function, arg_name=name)
             handler_name = str(function.__name__)
             self.binding_manager.register_binding(
                 Binding(
