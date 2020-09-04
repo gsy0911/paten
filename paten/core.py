@@ -171,9 +171,8 @@ class Paten:
 
         return _wrapper
 
-    def out_http(self, name: Optional[str] = None):
+    def out_http(self, name: Optional[str] = "$return"):
         def _wrapper(function):
-            _name = name if name is not None else "$return"
 
             handler_name = str(function.__name__)
             self.binding_manager.register_binding(
