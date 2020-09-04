@@ -196,6 +196,36 @@ class Paten:
             return function
 
         return _wrapper
+    
+    @staticmethod
+    def _generate_bind_info(name: str, _type: str, direction: str, **kwargs):
+        bind_info = {
+            "name": name,
+            "type": _type,
+            "direction": direction
+        }
+        bind_info.update(kwargs)
+        return bind_info
+    
+    def bind(self, name: str, _type: str, direction: str, **kwargs):
+        """
+        Add not supported bind trigger/in/out.
+        
+        Args:
+            name: A name for the argument, usually `msg`.
+            _type: bind type
+            direction: `in` or `out`
+            **kwargs: additional keyword-arguments
+        
+        """
+        def _wrapper(function):
+            out_bind = {
+                "function_name": str(function.__name__),
+                "values": self._generate_bind_info(name=name, _type=_type, direction=direction, **kwargs)
+            }
+            self.function_bind_list.append(out_bind)
+            return function
+        return _wrapper
 
     def out_http(self, name: Optional[str] = None):
         def _wrapper(function):
