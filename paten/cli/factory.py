@@ -42,7 +42,9 @@ class CliFactory:
         try:
             _ = subprocess.run(
                 check_command,
-                check=True
+                check=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE
             )
         except subprocess.CalledProcessError:
             raise AzureFunctionsCoreToolsNotFoundError("`Azure Functions Core Tools` is not found.")
@@ -54,19 +56,10 @@ class CliFactory:
         try:
             self._check_required_library_installed()
 
-            process = subprocess.run(
+            _ = subprocess.run(
                 deploy_command,
                 cwd=".paten",
-                check=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE)
-            stdout = process.stdout.decode()
-            if stdout:
-                prompter.echo(stdout)
-
-            stderr = process.stderr.decode()
-            if stderr:
-                prompter.echo(stderr)
+                check=True)
         except subprocess.CalledProcessError as e:
             prompter.echo(e)
             stdout = e.stdout.decode()
