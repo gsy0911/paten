@@ -5,9 +5,9 @@ from typing import Union, Optional
 from shutil import copyfile
 
 from .error import ArgumentNameInvalidError
-from .bindings import (
-    BindingsManager,
-    Bindings
+from .binding import (
+    BindingManager,
+    Binding
 )
 
 
@@ -23,11 +23,7 @@ class Paten:
         """
         self.function_app_name = function_app_name
         # manage user-define-handlers to generate `function.json` with bindings
-        self.bindings_manager = BindingsManager()
-        # manage function list including bindings
-        # self.function_info_list = []
-        # manage bindings
-        # self.function_bind_list = []
+        self.binding_manager = BindingManager()
         
     def _check_argument(function: callable, arg_name: str) -> None:
         """
@@ -63,7 +59,7 @@ class Paten:
             self._check_argument(function=function, arg_name=name)
             
             handler_name = str(function.__name__)
-            self.bindings_manager.register_bindings(
+            self.binding_manager.register_bindings(
                 Bindings(
                     handler_name=handler_name,
                     name=name,
@@ -75,7 +71,7 @@ class Paten:
                 )
             )
             
-            self.bindigs_manger.register_function_app(handler_name=handler_name)
+            self.bindig_manger.register_function_app(handler_name=handler_name)
             return function
 
         return _wrapper
@@ -94,7 +90,7 @@ class Paten:
             self._check_argument(function=function, arg_name=name)
 
             handler_name = str(function.__name__)
-            self.bindings_manager.register_bindings(
+            self.binding_manager.register_bindings(
                 Bindings(
                     handler_name=handler_name,
                     name=name,
@@ -126,7 +122,7 @@ class Paten:
             _connection = connection if connection is not None else "AzureWebJobsStorage"
 
             handler_name = str(function.__name__)
-            self.bindings_manager.register_bindings(
+            self.binding_manager.register_bindings(
                 Bindings(
                     handler_name=handler_name,
                     name=name,
@@ -159,7 +155,7 @@ class Paten:
             _connection = connection if connection is not None else "AzureWebJobsStorage"
 
             handler_name = str(function.__name__)
-            self.bindings_manager.register_bindings(
+            self.binding_manager.register_bindings(
                 Bindings(
                     handler_name=handler_name,
                     name=name,
@@ -180,7 +176,7 @@ class Paten:
             _name = name if name is not None else "$return"
 
             handler_name = str(function.__name__)
-            self.bindings_manager.register_bindings(
+            self.binding_manager.register_bindings(
                 Bindings(
                     handler_name=handler_name,
                     name=name,
@@ -200,7 +196,7 @@ class Paten:
             _connection = connection if connection is not None else "AzureWebJobsStorage"
 
             handler_name = str(function.__name__)
-            self.bindings_manager.register_bindings(
+            self.binding_manager.register_bindings(
                 Bindings(
                     handler_name=handler_name,
                     name=name,
@@ -268,7 +264,7 @@ class Paten:
         with open(f"{file_parent_dir}/host.json", "w") as f:
             json.dump(self._generate_host_json(), f)
 
-        for func in self.bindings_manager.function_app_list:
+        for func in self.binding_manager.function_app_list:
             function_app_dir = f"{file_parent_dir}/{func['function_name']}"
             os.makedirs(function_app_dir, exist_ok=True)
 
@@ -286,7 +282,7 @@ class Paten:
         
         """
         output_list = ["app.py", "|"]
-        for func in self.bindings_manager.function_app_list:
+        for func in self.binding_manager.function_app_list:
             output_list.append(f"|-{func['function_name']}")
             for bindings in func['function_json']['bindings']:
                 output_list.append(f"|  |-[{bindings['type']}] {bindings['name']}")

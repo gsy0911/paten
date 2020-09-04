@@ -4,12 +4,12 @@ Classes to mange bindings for `function.json`.
 """
 
 
-class BindigsManager:
+class BindigManager:
     def __init__(self):
         # manage function list including bindings
         self.function_app_list = []
         # manage bindings
-        self.bindigs_list = []
+        self.binding_list = []
     
     def register_bindings(self, bindings: Bindings):
         self.bindigs_list.append(bindings)
@@ -24,13 +24,13 @@ class BindigsManager:
             "function_json": {
                 "scriptFile": "__init__.py",
                 "entryPoint": handler_name,
-                "bindings": [bind.to_dict() for bind in self.bindings_list if
+                "bindings": [bind.to_dict() for bind in self.binding_list if
                              bind.handler_name == handler_name]
             }
         }
 
    
-class Bindings:
+class Binding:
     def __init__(self, handler_name: str, name: str, _type: str, direction: str, **kwargs):
         self.handler_name = handler_name
         self.name = name
