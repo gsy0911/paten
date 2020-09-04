@@ -228,26 +228,14 @@ class Paten:
         return self.out_bind(name=name, _type="http", is_arg_name_check=False)
 
     def out_queue(self, name: str, queue_name: str, connection: Optional[str] = None):
-        def _wrapper(function):
-            # check arguments
-            self._check_argument(function=function, arg_name=name)
+        _connection = connection if connection is not None else "AzureWebJobsStorage"
 
-            _connection = connection if connection is not None else "AzureWebJobsStorage"
-
-            handler_name = str(function.__name__)
-            self.binding_manager.register_binding(
-                Binding(
-                    handler_name=handler_name,
-                    name=name,
-                    _type="queue",
-                    direction="out",
-                    queueName=queue_name,
-                    connection=_connection
-                )
-            )
-            return function
-
-        return _wrapper
+        return self.out_bind(
+            name=name,
+            _type="queue",
+            queueName=queue_name,
+            connection=_connection
+        )
 
     @staticmethod
     def _generate_function_json():
