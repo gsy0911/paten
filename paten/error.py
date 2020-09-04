@@ -4,3 +4,7 @@ class PatenBaseError(Exception):
 
 class ArgumentNameInvalidError(PatenBaseError):
     pass
+
+
+class AzureFunctionsCoreToolsNotFoundError(PatenBaseError):
+    pass

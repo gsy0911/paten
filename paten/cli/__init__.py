@@ -21,10 +21,12 @@ def cmd(ctx, function_app_dir: str):
 @cmd.command("deploy")
 @click.pass_context
 def deploy(ctx):
-    click.echo('start to deploy')
     cli_factory: CliFactory = ctx.obj['factory']
     paten_app = cli_factory.load_paten_app()
     paten_app.export()
+
+    function_app_name = paten_app.function_app_name
+    cli_factory.deploy(prompter=click, function_app_name=function_app_name)
 
 
 @cmd.command("build")

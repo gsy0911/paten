@@ -47,6 +47,100 @@ class Paten:
                 }
             })
             return function
+
+        return _wrapper
+
+    def timer_trigger(self, name: str, schedule: str):
+        def _wrapper(function):
+            sig = signature(function)
+            if name not in sig.parameters:
+                raise ArgumentNameInvalidError(f"{name} not in {function.__name__}")
+
+            self.function_bind_list.append({
+                "function_name": str(function.__name__),
+                "values": {
+                    "type": "timerTrigger",
+                    "direction": "in",
+                    "name": name,
+                    "schedule": schedule
+                }
+            })
+
+            self.function_info_list.append({
+                "function_name": str(function.__name__),
+                "function_json": {
+                    "scriptFile": "__init__.py",
+                    "entryPoint": str(function.__name__),
+                    "bindings": [d['values'] for d in self.function_bind_list if
+                                 d['function_name'] == str(function.__name__)]
+                }
+            })
+            return function
+
+        return _wrapper
+
+    def queue_trigger(self, name: str, queue_name: str, connection: Optional[str] = None):
+        def _wrapper(function):
+            sig = signature(function)
+            if name not in sig.parameters:
+                raise ArgumentNameInvalidError(f"{name} not in {function.__name__}")
+
+            _connection = connection if connection is not None else "AzureWebJobsStorage"
+
+            self.function_bind_list.append({
+                "function_name": str(function.__name__),
+                "values": {
+                    "type": "queueTrigger",
+                    "direction": "in",
+                    "name": name,
+                    "queueName": queue_name,
+                    "connection": _connection
+                }
+            })
+
+            self.function_info_list.append({
+                "function_name": str(function.__name__),
+                "function_json": {
+                    "scriptFile": "__init__.py",
+                    "entryPoint": str(function.__name__),
+                    "bindings": [d['values'] for d in self.function_bind_list if
+                                 d['function_name'] == str(function.__name__)]
+                }
+            })
+            return function
+
+        return _wrapper
+
+    def blob_trigger(self, name: str, path: str, connection: Optional[str] = None):
+        def _wrapper(function):
+            sig = signature(function)
+            if name not in sig.parameters:
+                raise ArgumentNameInvalidError(f"{name} not in {function.__name__}")
+
+            _connection = connection if connection is not None else "AzureWebJobsStorage"
+
+            self.function_bind_list.append({
+                "function_name": str(function.__name__),
+                "values": {
+                    "name": name,
+                    "type": "blobTrigger",
+                    "direction": "in",
+                    "path": path,
+                    "connection": _connection
+                }
+            })
+
+            self.function_info_list.append({
+                "function_name": str(function.__name__),
+                "function_json": {
+                    "scriptFile": "__init__.py",
+                    "entryPoint": str(function.__name__),
+                    "bindings": [d['values'] for d in self.function_bind_list if
+                                 d['function_name'] == str(function.__name__)]
+                }
+            })
+            return function
+
         return _wrapper
 
     def out_http(self, name: Optional[str] = None):
@@ -62,6 +156,7 @@ class Paten:
                 }
             })
             return function
+
         return _wrapper
 
     def out_queue(self, name: str, queue_name: str, connection: Optional[str] = None):
@@ -84,6 +179,7 @@ class Paten:
                 }
             })
             return function
+
         return _wrapper
 
     @staticmethod
