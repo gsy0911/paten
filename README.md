@@ -25,7 +25,7 @@ See below to install the libraries.
 * [Azure CLI](https://docs.microsoft.com/ja-jp/cli/azure/install-azure-cli?view=azure-cli-latest)
 * [Azure Functions Core Tools](https://docs.microsoft.com/ja-jp/azure/azure-functions/functions-run-local?tabs=macos%2Cpython%2Cbash)
 
-## preparetion
+## preparation
 
 Before deploying to Azure, `az login` is required.
 
