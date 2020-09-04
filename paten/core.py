@@ -5,6 +5,10 @@ from typing import Union, Optional
 from shutil import copyfile
 
 from .error import ArgumentNameInvalidError
+from .bindings import (
+    BindingsManager,
+    Bindings
+)
 
 
 class Paten:
@@ -18,10 +22,12 @@ class Paten:
         
         """
         self.function_app_name = function_app_name
+        # manage user-define-handlers to generate `function.json` with bindings
+        self.bindings_manager = BindingsManager()
         # manage function list including bindings
-        self.function_info_list = []
+        # self.function_info_list = []
         # manage bindings
-        self.function_bind_list = []
+        # self.function_bind_list = []
         
     def _check_argument(function: callable, arg_name: str) -> None:
         """
@@ -55,28 +61,21 @@ class Paten:
         def _wrapper(function):
             # check arguments
             self._check_argument(function=function, arg_name=name)
-
-            self.function_bind_list.append({
-                "function_name": str(function.__name__),
-                "values": {
-                    "authLevel": auth_level,
-                    "type": "httpTrigger",
-                    "direction": "in",
-                    "name": name,
-                    "route": route,
-                    "methods": methods
-                }
-            })
-
-            self.function_info_list.append({
-                "function_name": str(function.__name__),
-                "function_json": {
-                    "scriptFile": "__init__.py",
-                    "entryPoint": str(function.__name__),
-                    "bindings": [d['values'] for d in self.function_bind_list if
-                                 d['function_name'] == str(function.__name__)]
-                }
-            })
+            
+            handler_name = str(function.__name__)
+            self.bindings_manager.register_bindings(
+                Bindings(
+                    handler_name=handler_name,
+                    name=name,
+                    _type="httpTrigger",
+                    direction="in",
+                    route=route,
+                    methods=methods,
+                    authLevel=auth_level
+                )
+            )
+            
+            self.bindigs_manger.register_function_app(handler_name=handler_name)
             return function
 
         return _wrapper
@@ -94,25 +93,18 @@ class Paten:
             # check arguments
             self._check_argument(function=function, arg_name=name)
 
-            self.function_bind_list.append({
-                "function_name": str(function.__name__),
-                "values": {
-                    "type": "timerTrigger",
-                    "direction": "in",
-                    "name": name,
-                    "schedule": schedule
-                }
-            })
-
-            self.function_info_list.append({
-                "function_name": str(function.__name__),
-                "function_json": {
-                    "scriptFile": "__init__.py",
-                    "entryPoint": str(function.__name__),
-                    "bindings": [d['values'] for d in self.function_bind_list if
-                                 d['function_name'] == str(function.__name__)]
-                }
-            })
+            handler_name = str(function.__name__)
+            self.bindings_manager.register_bindings(
+                Bindings(
+                    handler_name=handler_name,
+                    name=name,
+                    _type="timerTrigger",
+                    direction="in",
+                    schedule=schedule
+                )
+            )
+            
+            self.bindigs_manger.register_function_app(handler_name=handler_name)
             return function
 
         return _wrapper
@@ -133,26 +125,19 @@ class Paten:
 
             _connection = connection if connection is not None else "AzureWebJobsStorage"
 
-            self.function_bind_list.append({
-                "function_name": str(function.__name__),
-                "values": {
-                    "type": "queueTrigger",
-                    "direction": "in",
-                    "name": name,
-                    "queueName": queue_name,
-                    "connection": _connection
-                }
-            })
-
-            self.function_info_list.append({
-                "function_name": str(function.__name__),
-                "function_json": {
-                    "scriptFile": "__init__.py",
-                    "entryPoint": str(function.__name__),
-                    "bindings": [d['values'] for d in self.function_bind_list if
-                                 d['function_name'] == str(function.__name__)]
-                }
-            })
+            handler_name = str(function.__name__)
+            self.bindings_manager.register_bindings(
+                Bindings(
+                    handler_name=handler_name,
+                    name=name,
+                    _type="queueTrigger",
+                    direction="in",
+                    queueName=queue_name,
+                    connection=_connection
+                )
+            )
+            
+            self.bindigs_manger.register_function_app(handler_name=handler_name)
             return function
 
         return _wrapper
@@ -173,72 +158,36 @@ class Paten:
 
             _connection = connection if connection is not None else "AzureWebJobsStorage"
 
-            self.function_bind_list.append({
-                "function_name": str(function.__name__),
-                "values": {
-                    "name": name,
-                    "type": "blobTrigger",
-                    "direction": "in",
-                    "path": path,
-                    "connection": _connection
-                }
-            })
-
-            self.function_info_list.append({
-                "function_name": str(function.__name__),
-                "function_json": {
-                    "scriptFile": "__init__.py",
-                    "entryPoint": str(function.__name__),
-                    "bindings": [d['values'] for d in self.function_bind_list if
-                                 d['function_name'] == str(function.__name__)]
-                }
-            })
+            handler_name = str(function.__name__)
+            self.bindings_manager.register_bindings(
+                Bindings(
+                    handler_name=handler_name,
+                    name=name,
+                    _type="blobTrigger",
+                    direction="in",
+                    path=path,
+                    connection=_connection
+                )
+            )
+            
+            self.bindigs_manger.register_function_app(handler_name=handler_name)
             return function
 
-        return _wrapper
-    
-    @staticmethod
-    def _generate_bind_info(name: str, _type: str, direction: str, **kwargs):
-        bind_info = {
-            "name": name,
-            "type": _type,
-            "direction": direction
-        }
-        bind_info.update(kwargs)
-        return bind_info
-    
-    def bind(self, name: str, _type: str, direction: str, **kwargs):
-        """
-        Add not supported bind trigger/in/out.
-        
-        Args:
-            name: A name for the argument, usually `msg`.
-            _type: bind type
-            direction: `in` or `out`
-            **kwargs: additional keyword-arguments
-        
-        """
-        def _wrapper(function):
-            out_bind = {
-                "function_name": str(function.__name__),
-                "values": self._generate_bind_info(name=name, _type=_type, direction=direction, **kwargs)
-            }
-            self.function_bind_list.append(out_bind)
-            return function
         return _wrapper
 
     def out_http(self, name: Optional[str] = None):
         def _wrapper(function):
             _name = name if name is not None else "$return"
 
-            self.function_bind_list.append({
-                "function_name": str(function.__name__),
-                "values": {
-                    "type": "http",
-                    "direction": "out",
-                    "name": _name
-                }
-            })
+            handler_name = str(function.__name__)
+            self.bindings_manager.register_bindings(
+                Bindings(
+                    handler_name=handler_name,
+                    name=name,
+                    _type="http",
+                    direction="out"
+                )
+            )
             return function
 
         return _wrapper
@@ -250,16 +199,17 @@ class Paten:
 
             _connection = connection if connection is not None else "AzureWebJobsStorage"
 
-            self.function_bind_list.append({
-                "function_name": str(function.__name__),
-                "values": {
-                    "type": "queue",
-                    "direction": "out",
-                    "name": name,
-                    "queueName": queue_name,
-                    "connection": _connection
-                }
-            })
+            handler_name = str(function.__name__)
+            self.bindings_manager.register_bindings(
+                Bindings(
+                    handler_name=handler_name,
+                    name=name,
+                    _type="queue",
+                    direction="out",
+                    queueName=queue_name,
+                    connection=_connection
+                )
+            )
             return function
 
         return _wrapper
@@ -318,7 +268,7 @@ class Paten:
         with open(f"{file_parent_dir}/host.json", "w") as f:
             json.dump(self._generate_host_json(), f)
 
-        for func in self.function_info_list:
+        for func in self.bindings_manager.function_app_list:
             function_app_dir = f"{file_parent_dir}/{func['function_name']}"
             os.makedirs(function_app_dir, exist_ok=True)
 
@@ -336,7 +286,7 @@ class Paten:
         
         """
         output_list = ["app.py", "|"]
-        for func in self.function_info_list:
+        for func in self.bindings_manager.function_app_list:
             output_list.append(f"|-{func['function_name']}")
             for bindings in func['function_json']['bindings']:
                 output_list.append(f"|  |-[{bindings['type']}] {bindings['name']}")
