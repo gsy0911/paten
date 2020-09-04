@@ -24,7 +24,8 @@ class Paten:
         self.function_app_name = function_app_name
         # manage user-define-handlers to generate `function.json` with bindings
         self.binding_manager = BindingManager()
-        
+
+    @staticmethod
     def _check_argument(function: callable, arg_name: str) -> None:
         """
         Check whether the `arg_name` in the parameter of the `function`.
@@ -41,7 +42,6 @@ class Paten:
         sig = signature(function)
         if arg_name not in sig.parameters:
             raise ArgumentNameInvalidError(f"{arg_name} not in {function.__name__}")
-        
 
     def http_trigger(self, name, methods: Union[list, str], route: str, auth_level: str = "function"):
         """
@@ -59,8 +59,8 @@ class Paten:
             self._check_argument(function=function, arg_name=name)
             
             handler_name = str(function.__name__)
-            self.binding_manager.register_bindings(
-                Bindings(
+            self.binding_manager.register_binding(
+                Binding(
                     handler_name=handler_name,
                     name=name,
                     _type="httpTrigger",
@@ -71,7 +71,7 @@ class Paten:
                 )
             )
             
-            self.binding_manger.register_function_app(handler_name=handler_name)
+            self.binding_manager.register_function_app(handler_name=handler_name)
             return function
 
         return _wrapper
@@ -90,8 +90,8 @@ class Paten:
             self._check_argument(function=function, arg_name=name)
 
             handler_name = str(function.__name__)
-            self.binding_manager.register_bindings(
-                Bindings(
+            self.binding_manager.register_binding(
+                Binding(
                     handler_name=handler_name,
                     name=name,
                     _type="timerTrigger",
@@ -100,7 +100,7 @@ class Paten:
                 )
             )
             
-            self.binding_manger.register_function_app(handler_name=handler_name)
+            self.binding_manager.register_function_app(handler_name=handler_name)
             return function
 
         return _wrapper
@@ -122,8 +122,8 @@ class Paten:
             _connection = connection if connection is not None else "AzureWebJobsStorage"
 
             handler_name = str(function.__name__)
-            self.binding_manager.register_bindings(
-                Bindings(
+            self.binding_manager.register_binding(
+                Binding(
                     handler_name=handler_name,
                     name=name,
                     _type="queueTrigger",
@@ -133,7 +133,7 @@ class Paten:
                 )
             )
             
-            self.binding_manger.register_function_app(handler_name=handler_name)
+            self.binding_manager.register_function_app(handler_name=handler_name)
             return function
 
         return _wrapper
@@ -155,8 +155,8 @@ class Paten:
             _connection = connection if connection is not None else "AzureWebJobsStorage"
 
             handler_name = str(function.__name__)
-            self.binding_manager.register_bindings(
-                Bindings(
+            self.binding_manager.register_binding(
+                Binding(
                     handler_name=handler_name,
                     name=name,
                     _type="blobTrigger",
@@ -166,7 +166,7 @@ class Paten:
                 )
             )
             
-            self.binding_manger.register_function_app(handler_name=handler_name)
+            self.binding_manager.register_function_app(handler_name=handler_name)
             return function
 
         return _wrapper
@@ -176,8 +176,8 @@ class Paten:
             _name = name if name is not None else "$return"
 
             handler_name = str(function.__name__)
-            self.binding_manager.register_bindings(
-                Bindings(
+            self.binding_manager.register_binding(
+                Binding(
                     handler_name=handler_name,
                     name=name,
                     _type="http",
@@ -196,8 +196,8 @@ class Paten:
             _connection = connection if connection is not None else "AzureWebJobsStorage"
 
             handler_name = str(function.__name__)
-            self.binding_manager.register_bindings(
-                Bindings(
+            self.binding_manager.register_binding(
+                Binding(
                     handler_name=handler_name,
                     name=name,
                     _type="queue",
