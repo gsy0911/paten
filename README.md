@@ -63,11 +63,11 @@ def example_http_function(req: func.HttpRequest) -> func.HttpResponse:
 
 ```
 
-Finally, to generate files which are ready to deploy azure functions, type below in the directory `{project_name}`.
-The files are generated in `./{project_name}/.paten`
+Finally, to deploy to azure functions, type below in the directory `{project_name}`.
+The files are generated in `./{project_name}/.paten` and your function app is deployed to azure.
 
 ```shell script
-$ paten build
+$ paten deploy
 ```
 
 ## support bindings
