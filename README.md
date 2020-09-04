@@ -13,8 +13,26 @@ Paten is a framework for azure functions written in Python. Paten provides:
 
 ## install
 
+install `paten` package.
+
 ```shell script
 $ pip install paten
+```
+
+In addition, `Azure CLI` and `Azure Functions Core Tools` are required. 
+See below to install the libraries.
+
+* [Azure CLI](https://docs.microsoft.com/ja-jp/cli/azure/install-azure-cli?view=azure-cli-latest)
+* [Azure Functions Core Tools](https://docs.microsoft.com/ja-jp/azure/azure-functions/functions-run-local?tabs=macos%2Cpython%2Cbash)
+
+## preparetion
+
+Before deploying to Azure, `az login` is required.
+
+```shell script
+$ az login
+
+You have logged in. Now let us find all the subscriptions to which you have access...
 ```
 
 ## Quickstart
@@ -45,11 +63,11 @@ def example_http_function(req: func.HttpRequest) -> func.HttpResponse:
 
 ```
 
-Finally, to generate files which are ready to deploy azure functions, type below in the directory `{project_name}`.
-The files are generated in `./{project_name}/.paten`
+Finally, to deploy to azure functions, type below in the directory `{project_name}`.
+The files are generated in `./{project_name}/.paten` and your function app is deployed to azure.
 
 ```shell script
-$ paten build
+$ paten deploy
 ```
 
 ## support bindings
