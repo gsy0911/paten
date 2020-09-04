@@ -43,8 +43,8 @@ class CliFactory:
             _ = subprocess.run(
                 check_command,
                 check=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL
             )
         except subprocess.CalledProcessError:
             raise AzureFunctionsCoreToolsNotFoundError("`Azure CLI` is not found.")
@@ -54,8 +54,8 @@ class CliFactory:
             _ = subprocess.run(
                 check_command,
                 check=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL
             )
         except subprocess.CalledProcessError:
             raise AzureFunctionsCoreToolsNotFoundError("`Azure Functions Core Tools` is not found.")
