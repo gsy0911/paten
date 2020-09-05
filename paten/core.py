@@ -44,6 +44,17 @@ class Paten:
             raise ArgumentNameInvalidError(f"{arg_name} not in {function.__name__}")
 
     def trigger(self, name: str, _type: str, **kwargs):
+        """
+        Add Trigger.
+
+        Args:
+            name: A name for the argument.
+            _type: A name for the trigger type.
+            **kwargs: Required parameters in each trigger type.
+
+        Returns:
+
+        """
         def _wrapper(function):
             self._check_argument(function=function, arg_name=name)
 
@@ -106,12 +117,11 @@ class Paten:
             connection: A connection for the Queue Storage, by default `AzureWebJobsStorage`.
         
         """
-        _connection = connection if connection is not None else "AzureWebJobsStorage"
         return self.trigger(
             name=name,
             _type="queueTrigger",
             queueName=queue_name,
-            connection=_connection
+            connection=connection if connection is not None else "AzureWebJobsStorage"
         )
 
     def blob_trigger(self, name: str, path: str, connection: Optional[str] = None):
@@ -124,15 +134,25 @@ class Paten:
             connection: A connection for the Blob Storage, by default `AzureWebJobsStorage`.
         
         """
-        _connection = connection if connection is not None else "AzureWebJobsStorage"
         return self.trigger(
             name=name,
             _type="blobTrigger",
             path=path,
-            connection=_connection
+            connection=connection if connection is not None else "AzureWebJobsStorage"
         )
 
     def in_bind(self, name: str, _type: str, **kwargs):
+        """
+        Add in-bind.
+
+        Args:
+            name: A name for the argument.
+            _type: A name for the trigger type.
+            **kwargs: Required parameters in each trigger type.
+
+        Returns:
+
+        """
         def _wrapper(function):
             handler_name = str(function.__name__)
             self.binding_manager.register_binding(
@@ -149,6 +169,17 @@ class Paten:
         return _wrapper
 
     def out_bind(self, name: str, _type: str, is_arg_name_check: bool = True, **kwargs):
+        """
+
+        Args:
+            name: A name for the argument.
+            _type: A name for the trigger type.
+            is_arg_name_check: if True, check the argument-name of the function.
+            **kwargs: Required parameters in each trigger type.
+
+        Returns:
+
+        """
         def _wrapper(function):
             if is_arg_name_check:
                 self._check_argument(function=function, arg_name=name)
@@ -170,13 +201,11 @@ class Paten:
         return self.out_bind(name=name, _type="http", is_arg_name_check=False)
 
     def out_queue(self, name: str, queue_name: str, connection: Optional[str] = None):
-        _connection = connection if connection is not None else "AzureWebJobsStorage"
-
         return self.out_bind(
             name=name,
             _type="queue",
             queueName=queue_name,
-            connection=_connection
+            connection=connection if connection is not None else "AzureWebJobsStorage"
         )
 
     @staticmethod
