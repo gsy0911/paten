@@ -44,6 +44,17 @@ class Paten:
             raise ArgumentNameInvalidError(f"{arg_name} not in {function.__name__}")
 
     def trigger(self, name: str, _type: str, **kwargs):
+        """
+        Add Trigger.
+
+        Args:
+            name: A name for the argument.
+            _type: A name for the trigger type.
+            **kwargs: Required parameters in each trigger type.
+
+        Returns:
+
+        """
         def _wrapper(function):
             self._check_argument(function=function, arg_name=name)
 
@@ -62,7 +73,7 @@ class Paten:
 
         return _wrapper
 
-    def http_trigger(self, name, methods: Union[list, str], route: str, auth_level: str = "function"):
+    def http_trigger(self, name: str, methods: Union[list, str], route: str, auth_level: str = "function"):
         """
         Add HttpTrigger.
         
@@ -73,27 +84,13 @@ class Paten:
             auth_level: Authentication level for the Function App, function, anonymous are acceptable.
         
         """
-        def _wrapper(function):
-            # check arguments
-            self._check_argument(function=function, arg_name=name)
-            
-            handler_name = str(function.__name__)
-            self.binding_manager.register_binding(
-                Binding(
-                    handler_name=handler_name,
-                    name=name,
-                    _type="httpTrigger",
-                    direction="in",
-                    route=route,
-                    methods=methods,
-                    authLevel=auth_level
-                )
-            )
-            
-            self.binding_manager.register_function_app(handler_name=handler_name)
-            return function
-
-        return _wrapper
+        return self.trigger(
+            name=name,
+            _type="httpTrigger",
+            route=route,
+            methods=methods,
+            authLevel=auth_level
+        )
 
     def timer_trigger(self, name: str, schedule: str):
         """
@@ -104,25 +101,11 @@ class Paten:
             schedule: The time when the Function App is invoked.
         
         """
-        def _wrapper(function):
-            # check arguments
-            self._check_argument(function=function, arg_name=name)
-
-            handler_name = str(function.__name__)
-            self.binding_manager.register_binding(
-                Binding(
-                    handler_name=handler_name,
-                    name=name,
-                    _type="timerTrigger",
-                    direction="in",
-                    schedule=schedule
-                )
-            )
-            
-            self.binding_manager.register_function_app(handler_name=handler_name)
-            return function
-
-        return _wrapper
+        return self.trigger(
+            name=name,
+            _type="timerTrigger",
+            schedule=schedule
+        )
 
     def queue_trigger(self, name: str, queue_name: str, connection: Optional[str] = None):
         """
@@ -134,28 +117,12 @@ class Paten:
             connection: A connection for the Queue Storage, by default `AzureWebJobsStorage`.
         
         """
-        def _wrapper(function):
-            # check arguments
-            self._check_argument(function=function, arg_name=name)
-
-            _connection = connection if connection is not None else "AzureWebJobsStorage"
-
-            handler_name = str(function.__name__)
-            self.binding_manager.register_binding(
-                Binding(
-                    handler_name=handler_name,
-                    name=name,
-                    _type="queueTrigger",
-                    direction="in",
-                    queueName=queue_name,
-                    connection=_connection
-                )
-            )
-            
-            self.binding_manager.register_function_app(handler_name=handler_name)
-            return function
-
-        return _wrapper
+        return self.trigger(
+            name=name,
+            _type="queueTrigger",
+            queueName=queue_name,
+            connection=connection if connection is not None else "AzureWebJobsStorage"
+        )
 
     def blob_trigger(self, name: str, path: str, connection: Optional[str] = None):
         """
@@ -167,66 +134,79 @@ class Paten:
             connection: A connection for the Blob Storage, by default `AzureWebJobsStorage`.
         
         """
+        return self.trigger(
+            name=name,
+            _type="blobTrigger",
+            path=path,
+            connection=connection if connection is not None else "AzureWebJobsStorage"
+        )
+
+    def in_bind(self, name: str, _type: str, **kwargs):
+        """
+        Add in-bind.
+
+        Args:
+            name: A name for the argument.
+            _type: A name for the trigger type.
+            **kwargs: Required parameters in each trigger type.
+
+        Returns:
+
+        """
         def _wrapper(function):
-            # check arguments
-            self._check_argument(function=function, arg_name=name)
-
-            _connection = connection if connection is not None else "AzureWebJobsStorage"
-
             handler_name = str(function.__name__)
             self.binding_manager.register_binding(
                 Binding(
                     handler_name=handler_name,
                     name=name,
-                    _type="blobTrigger",
+                    _type=_type,
                     direction="in",
-                    path=path,
-                    connection=_connection
+                    **kwargs
                 )
             )
-            
-            self.binding_manager.register_function_app(handler_name=handler_name)
+            return function
+
+        return _wrapper
+
+    def out_bind(self, name: str, _type: str, is_arg_name_check: bool = True, **kwargs):
+        """
+
+        Args:
+            name: A name for the argument.
+            _type: A name for the trigger type.
+            is_arg_name_check: if True, check the argument-name of the function.
+            **kwargs: Required parameters in each trigger type.
+
+        Returns:
+
+        """
+        def _wrapper(function):
+            if is_arg_name_check:
+                self._check_argument(function=function, arg_name=name)
+            handler_name = str(function.__name__)
+            self.binding_manager.register_binding(
+                Binding(
+                    handler_name=handler_name,
+                    name=name,
+                    _type=_type,
+                    direction="out",
+                    **kwargs
+                )
+            )
             return function
 
         return _wrapper
 
     def out_http(self, name: Optional[str] = "$return"):
-        def _wrapper(function):
-
-            handler_name = str(function.__name__)
-            self.binding_manager.register_binding(
-                Binding(
-                    handler_name=handler_name,
-                    name=name,
-                    _type="http",
-                    direction="out"
-                )
-            )
-            return function
-
-        return _wrapper
+        return self.out_bind(name=name, _type="http", is_arg_name_check=False)
 
     def out_queue(self, name: str, queue_name: str, connection: Optional[str] = None):
-        def _wrapper(function):
-            # check arguments
-            self._check_argument(function=function, arg_name=name)
-
-            _connection = connection if connection is not None else "AzureWebJobsStorage"
-
-            handler_name = str(function.__name__)
-            self.binding_manager.register_binding(
-                Binding(
-                    handler_name=handler_name,
-                    name=name,
-                    _type="queue",
-                    direction="out",
-                    queueName=queue_name,
-                    connection=_connection
-                )
-            )
-            return function
-
-        return _wrapper
+        return self.out_bind(
+            name=name,
+            _type="queue",
+            queueName=queue_name,
+            connection=connection if connection is not None else "AzureWebJobsStorage"
+        )
 
     @staticmethod
     def _generate_function_json():
