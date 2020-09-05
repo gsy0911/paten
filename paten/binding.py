@@ -2,6 +2,32 @@
 Classes to mange bindings for `function.json`.
 
 """
+from enum import Enum, auto
+import re
+
+from .error import BindingInvalidError
+
+
+class BindingType(Enum):
+    TRIGGER = auto()
+    IN = auto()
+    OUT = auto()
+
+    @staticmethod
+    def get_type(_type: str, direction: str):
+        # if `_type` contains `Trigger`, return TRIGGER
+        trigger_bind = "[a-z]*Trigger"
+        result = re.match(trigger_bind, _type)
+        if result:
+            return BindingType.TRIGGER
+
+        # else, according to the `direction`
+        if direction == "in":
+            return BindingType.IN
+        elif direction == "out":
+            return BindingType.OUT
+        else:
+            raise BindingInvalidError(f"[{_type}] and [{direction}] are not matched.")
 
 
 class Binding:
