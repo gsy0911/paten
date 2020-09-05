@@ -5,7 +5,7 @@ Classes to mange bindings for `function.json`.
 from enum import Enum, auto
 import re
 
-from .error import BindingInvalidError
+from .error import BindingInvalidError, DecoratorAdditionInvalidError
 
 
 class BindingType(Enum):
@@ -42,6 +42,7 @@ class Binding:
         self.type = _type
         self.direction = direction
         self.kwargs = kwargs
+        self.bind_type = BindingType.get_type(_type=_type, direction=direction)
 
     def to_dict(self):
         bind_info = {
@@ -69,8 +70,16 @@ class BindingManager:
         self.function_app_list = []
         # manage bindings
         self.binding_list = []
-    
+
+    def _check_trigger_exists(self, handler_name: str) -> bool:
+        handler_name_related_bind = [bind.bind_type for bind in self.binding_list if bind.handler_name == handler_name]
+        if BindingType.TRIGGER in handler_name_related_bind:
+            return True
+        return False
+
     def register_binding(self, binding: Binding):
+        if self._check_trigger_exists(handler_name=binding.handler_name):
+            raise DecoratorAdditionInvalidError("cannot add @out/@in-binding after @trigger-binding.")
         self.binding_list.append(binding)
 
     def register_function_app(self, handler_name: str):
