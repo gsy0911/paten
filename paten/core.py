@@ -1,8 +1,8 @@
 from inspect import signature
 import json
 import os
+from shutil import copyfile, copytree, rmtree
 from typing import Union, Optional
-from shutil import copyfile
 
 from .error import ArgumentNameInvalidError
 from .binding import (
@@ -13,7 +13,7 @@ from .binding import (
 
 class Paten:
 
-    def __init__(self, function_app_name: str):
+    def __init__(self, function_app_name: str, module_folder_list: Optional[list] = None):
         """
         set function-app-name for the Azure Functions.
         
@@ -21,7 +21,12 @@ class Paten:
             function_app_name: A name for the Azure Functions to deploy.
         
         """
+        # function app candidate to deploy to.
         self.function_app_name = function_app_name
+        # user-defined module folder list
+        self.module_folder_list = ["shared_code"]
+        if module_folder_list:
+            self.module_folder_list.extend(module_folder_list)
         # manage user-define-handlers to generate `function.json` with bindings
         self.binding_manager = BindingManager()
 
@@ -248,9 +253,11 @@ class Paten:
         
         """
         file_parent_dir = f"./.paten"
+        # clean file_parent_dir before creating files
+        rmtree(file_parent_dir)
         os.makedirs(file_parent_dir, exist_ok=True)
 
-        # requirementsファイルの複製
+        # copy requirements.txt
         copyfile("requirements.txt", f"{file_parent_dir}/requirements.txt")
 
         with open(f"{file_parent_dir}/proxies.json", "w") as f:
@@ -273,6 +280,11 @@ class Paten:
 
             # 関数ファイルの配置
             copyfile("app.py", f"{function_app_dir}/__init__.py")
+
+        # copy user-defined module folders
+        for folder in self.module_folder_list:
+            if os.path.isdir(folder):
+                copytree(folder, f"{file_parent_dir}/{folder}")
 
     def plan(self) -> list:
         """
