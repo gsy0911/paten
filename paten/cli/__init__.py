@@ -62,14 +62,15 @@ def build(ctx):
 
 
 @cmd.command("local")
-@click.option('--host', default='127.0.0.1')
-@click.option('--port', default=8000, type=click.INT)
+@click.option('--port', default=7071, type=click.INT)
+@click.option('--use-https', is_flag=True)
 @click.pass_context
-def local(ctx, host='127.0.0.1', port=8000):
-    click.echo(f'hosting at local at {host}:{port}')
-
+def local(ctx, port=7071, use_https=False):
     cli_factory: CliFactory = ctx.obj['factory']
     paten_app = cli_factory.load_paten_app()
+    paten_app.export()
+
+    cli_factory.local(prompter=click, port=port, use_https=use_https)
 
 
 @cmd.command("plan")
