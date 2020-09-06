@@ -103,9 +103,9 @@ def _create_new_project_skeleton(function_app_name: str):
         f.write(GITIGNORE)
 
 
-@cmd.command("new-project")
+@cmd.command("new-app")
 @click.argument('function_app_name')
-def new_project(function_app_name: str):
+def new_app(function_app_name: str):
     """
     Create new Function App with sample python script.
     
