@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 import click
 
@@ -62,13 +63,14 @@ def build(ctx):
 
 
 @cmd.command("local")
+@click.option("--azure-web-jobs-storage", help="Value for the AzureWebJobsStorage.")
 @click.option('--port', default=7071, type=click.INT)
 @click.option('--use-https', is_flag=True)
 @click.pass_context
-def local(ctx, port=7071, use_https=False):
+def local(ctx, azure_web_jobs_storage: Optional[str], port=7071, use_https=False):
     cli_factory: CliFactory = ctx.obj['factory']
     paten_app = cli_factory.load_paten_app()
-    paten_app.export()
+    paten_app.export(azure_web_jobs_storage=azure_web_jobs_storage)
 
     cli_factory.local(prompter=click, port=port, use_https=use_https)
 
