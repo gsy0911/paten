@@ -3,7 +3,7 @@
 [![pytest](https://github.com/gsy0911/paten/workflows/pytest/badge.svg)](https://github.com/gsy0911/paten/actions?query=workflow%3Apytest)
 [![codecov](https://codecov.io/gh/gsy0911/paten/branch/master/graph/badge.svg)](https://codecov.io/gh/gsy0911/paten)
 [![PythonVersion](https://img.shields.io/badge/python-3.7|3.8-blue.svg)](https://www.python.org/downloads/release/python-377/)
-[![PiPY](https://img.shields.io/badge/pypi-0.1.1-blue.svg)](https://pypi.org/project/paten/)
+[![PiPY](https://img.shields.io/badge/pypi-0.1.2-blue.svg)](https://pypi.org/project/paten/)
 
 
 Paten is a framework for azure functions written in Python. Paten provides:
@@ -25,7 +25,7 @@ See below to install the libraries.
 * [Azure CLI](https://docs.microsoft.com/ja-jp/cli/azure/install-azure-cli?view=azure-cli-latest)
 * [Azure Functions Core Tools](https://docs.microsoft.com/ja-jp/azure/azure-functions/functions-run-local?tabs=macos%2Cpython%2Cbash)
 
-## preparetion
+## preparation
 
 Before deploying to Azure, `az login` is required.
 
@@ -41,7 +41,7 @@ In your project directory, type below.
 Directory {project_name} and example python scripts are created.
 
 ```shell script
-$ paten new-project {project_name}
+$ paten new-app {project_name}
 ```
 
 Then, modify `app.py`, like below.

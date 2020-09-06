@@ -10,6 +10,16 @@ from .factory import CliFactory
 @click.option('--function-app-dir')
 @click.pass_context
 def cmd(ctx, function_app_dir: str):
+    """
+    root command for the `paten`.
+    Currently, the sub-command below is supported:
+    
+    * build
+    * deploy
+    * new-project
+    * plan
+    
+    """
     if function_app_dir is None:
         function_app_dir = os.getcwd()
     if ctx.invoked_subcommand is None:
@@ -21,6 +31,10 @@ def cmd(ctx, function_app_dir: str):
 @cmd.command("deploy")
 @click.pass_context
 def deploy(ctx):
+    """
+    Deploy your app to Azure Functions via `Azure Functions Core Tools`.
+    
+    """
     cli_factory: CliFactory = ctx.obj['factory']
     paten_app = cli_factory.load_paten_app()
     paten_app.export()
@@ -32,6 +46,10 @@ def deploy(ctx):
 @cmd.command("build")
 @click.pass_context
 def build(ctx):
+    """
+    Build your app at directory `./.paten`.
+    
+    """
     cli_factory: CliFactory = ctx.obj['factory']
     paten_app = cli_factory.load_paten_app()
     paten_app.export()
@@ -57,6 +75,10 @@ def local(ctx, host='127.0.0.1', port=8000):
 @cmd.command("plan")
 @click.pass_context
 def plan(ctx):
+    """
+    Display the function to deploy based script `app.py`.
+    
+    """
     cli_factory: CliFactory = ctx.obj['factory']
     paten_app = cli_factory.load_paten_app()
     output_list = paten_app.plan()
@@ -67,6 +89,10 @@ def plan(ctx):
 
 
 def _create_new_project_skeleton(function_app_name: str):
+    """
+    Create new function app at `./function_app_name` with sample script.
+    
+    """
     paten_dir = os.path.join(function_app_name, '.paten')
     os.makedirs(paten_dir)
     with open(os.path.join(function_app_name, 'requirements.txt'), 'w'):
@@ -77,9 +103,13 @@ def _create_new_project_skeleton(function_app_name: str):
         f.write(GITIGNORE)
 
 
-@cmd.command("new-project")
+@cmd.command("new-app")
 @click.argument('function_app_name')
-def new_project(function_app_name: str):
+def new_app(function_app_name: str):
+    """
+    Create new Function App with sample python script.
+    
+    """
     click.echo(WELCOME_PROMPT % function_app_name)
     _create_new_project_skeleton(function_app_name=function_app_name)
 

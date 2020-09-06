@@ -1,7 +1,10 @@
 import pytest
 
 from paten import Paten
-from paten.error import ArgumentNameInvalidError
+from paten.error import (
+    ArgumentNameInvalidError,
+    DecoratorAdditionInvalidError
+)
 
 
 def test_http_trigger():
@@ -79,4 +82,14 @@ def test_blob_trigger_name_error():
     with pytest.raises(ArgumentNameInvalidError):
         @app.blob_trigger("blob", path="example/test.csv")
         def example(blob_name_different):
+            pass
+
+
+def test_decorator_addition_error():
+    app = Paten("paten")
+
+    with pytest.raises(DecoratorAdditionInvalidError):
+        @app.out_http()
+        @app.http_trigger(name="req", methods=["POST"], route="/test")
+        def example(req):
             pass
