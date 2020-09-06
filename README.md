@@ -41,7 +41,7 @@ In your project directory, type below.
 Directory {project_name} and example python scripts are created.
 
 ```shell script
-$ paten new-project {project_name}
+$ paten new-app {project_name}
 ```
 
 Then, modify `app.py`, like below.
