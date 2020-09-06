@@ -105,7 +105,7 @@ def _create_new_project_skeleton(function_app_name: str):
 
 
 @cmd.command("new-app")
-@click.argument('function_app_name')
+@click.argument('function-app-name')
 def new_app(function_app_name: str):
     """
     Create new Function App with sample python script.
