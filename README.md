@@ -38,10 +38,10 @@ You have logged in. Now let us find all the subscriptions to which you have acce
 ## Quickstart
 
 In your project directory, type below.
-Directory {project_name} and example python scripts are created.
+Directory {function_app_name} and example python scripts are created.
 
 ```shell script
-$ paten new-app {project_name}
+$ paten new-app {function_app_name}
 ```
 
 Then, modify `app.py`, like below.
@@ -50,7 +50,7 @@ Then, modify `app.py`, like below.
 import azure.functions as func
 from paten import Paten
 
-app = Paten('{project_name}')
+app = Paten('{function_app_name}')
 
 
 @app.http_trigger('req', methods=['GET'], route='/')
@@ -63,8 +63,14 @@ def example_http_function(req: func.HttpRequest) -> func.HttpResponse:
 
 ```
 
-Finally, to deploy to azure functions, type below in the directory `{project_name}`.
-The files are generated in `./{project_name}/.paten` and your function app is deployed to azure.
+Before deploying to azure functions, you can test your functions on local with the command below.
+
+```shell script
+$ paten local
+```
+
+Finally, to deploy to azure functions, type below in the directory `{function_app_name}`.
+The files are generated in `./{function_app_name}/.paten` and your function app is deployed to azure.
 
 ```shell script
 $ paten deploy
