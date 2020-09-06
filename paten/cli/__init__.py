@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 import click
 
@@ -62,14 +63,26 @@ def build(ctx):
 
 
 @cmd.command("local")
-@click.option('--host', default='127.0.0.1')
-@click.option('--port', default=8000, type=click.INT)
+@click.option("--azure-web-jobs-storage", help="Value for the AzureWebJobsStorage.")
+@click.option('--port', default=7071, type=click.INT)
+@click.option('--use-https', is_flag=True)
 @click.pass_context
-def local(ctx, host='127.0.0.1', port=8000):
-    click.echo(f'hosting at local at {host}:{port}')
+def local(ctx, azure_web_jobs_storage: Optional[str], port=7071, use_https=False):
+    """
+    Debug on local
 
+    Args:
+        ctx: shared context on click
+        azure_web_jobs_storage: value for the AzureWebJobsStorage
+        port: listen port
+        use_https: use https
+
+    """
     cli_factory: CliFactory = ctx.obj['factory']
     paten_app = cli_factory.load_paten_app()
+    paten_app.export(azure_web_jobs_storage=azure_web_jobs_storage)
+
+    cli_factory.local(prompter=click, port=port, use_https=use_https)
 
 
 @cmd.command("plan")
@@ -104,7 +117,7 @@ def _create_new_project_skeleton(function_app_name: str):
 
 
 @cmd.command("new-app")
-@click.argument('function_app_name')
+@click.argument('function-app-name')
 def new_app(function_app_name: str):
     """
     Create new Function App with sample python script.
@@ -115,9 +128,4 @@ def new_app(function_app_name: str):
 
 
 def main():
-    # コンテキストから参照するアトリビュートを渡す
     cmd(obj={})
-
-
-if __name__ == '__main__':
-    main()
