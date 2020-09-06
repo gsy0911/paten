@@ -30,8 +30,9 @@ def cmd(ctx, function_app_dir: str):
 
 
 @cmd.command("deploy")
+@click.option("--function-app-name")
 @click.pass_context
-def deploy(ctx):
+def deploy(ctx, function_app_name: Optional[str] = None):
     """
     Deploy your app to Azure Functions via `Azure Functions Core Tools`.
     
@@ -40,8 +41,8 @@ def deploy(ctx):
     paten_app = cli_factory.load_paten_app()
     paten_app.export()
 
-    function_app_name = paten_app.function_app_name
-    cli_factory.deploy(prompter=click, function_app_name=function_app_name)
+    _function_app_name = paten_app.function_app_name if function_app_name is None else function_app_name
+    cli_factory.deploy(prompter=click, function_app_name=_function_app_name)
 
 
 @cmd.command("build")
