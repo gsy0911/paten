@@ -68,6 +68,16 @@ def build(ctx):
 @click.option('--use-https', is_flag=True)
 @click.pass_context
 def local(ctx, azure_web_jobs_storage: Optional[str], port=7071, use_https=False):
+    """
+    Debug on local
+
+    Args:
+        ctx: shared context on click
+        azure_web_jobs_storage: value for the AzureWebJobsStorage
+        port: listen port
+        use_https: use https
+
+    """
     cli_factory: CliFactory = ctx.obj['factory']
     paten_app = cli_factory.load_paten_app()
     paten_app.export(azure_web_jobs_storage=azure_web_jobs_storage)
@@ -118,9 +128,4 @@ def new_app(function_app_name: str):
 
 
 def main():
-    # コンテキストから参照するアトリビュートを渡す
     cmd(obj={})
-
-
-if __name__ == '__main__':
-    main()
