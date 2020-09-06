@@ -230,11 +230,11 @@ class Paten:
         }
 
     @staticmethod
-    def _generate_local_settings_json() -> dict:
+    def _generate_local_settings_json(azure_web_jobs_storage: str) -> dict:
         return {
             "IsEncrypted": False,
             "Values": {
-                "AzureWebJobsStorage": "",
+                "AzureWebJobsStorage": azure_web_jobs_storage,
                 "FUNCTIONS_WORKER_RUNTIME": "python"
             }
         }
@@ -246,7 +246,7 @@ class Paten:
             "proxies": {}
         }
 
-    def export(self):
+    def export(self, azure_web_jobs_storage: Optional[str] = None):
         """
         Export files required for deploying Azure Functions.
         Export directory is `./.paten`.
@@ -263,8 +263,9 @@ class Paten:
         with open(f"{file_parent_dir}/proxies.json", "w") as f:
             json.dump(self._generate_proxies_json(), f)
 
+        azure_web_jobs_storage = azure_web_jobs_storage if azure_web_jobs_storage is not None else "none"
         with open(f"{file_parent_dir}/local.settings.json", "w") as f:
-            json.dump(self._generate_local_settings_json(), f)
+            json.dump(self._generate_local_settings_json(azure_web_jobs_storage=azure_web_jobs_storage), f)
 
         with open(f"{file_parent_dir}/host.json", "w") as f:
             json.dump(self._generate_host_json(), f)
