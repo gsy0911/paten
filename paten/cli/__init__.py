@@ -4,6 +4,7 @@ from typing import Optional
 import click
 
 from paten.constants import TEMPLATE_APP, GITIGNORE, WELCOME_PROMPT
+from paten.utils import validate_function_app_name
 from .factory import CliFactory
 
 
@@ -124,6 +125,9 @@ def new_app(function_app_name: str):
     Create new Function App with sample python script.
     
     """
+    if not validate_function_app_name(function_app_name=function_app_name):
+        click.echo(f"{function_app_name} is invalid. Can only consists of `A-Z`, `a-z`, `0-9` and , `-`")
+        return
     click.echo(WELCOME_PROMPT % function_app_name)
     _create_new_project_skeleton(function_app_name=function_app_name)
 
