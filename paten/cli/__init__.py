@@ -43,6 +43,10 @@ def deploy(ctx, function_app_name: Optional[str] = None):
     paten_app.export()
 
     _function_app_name = paten_app.function_app_name if function_app_name is None else function_app_name
+    if not validate_function_app_name(function_app_name=_function_app_name):
+        click.echo(f"{_function_app_name} is invalid. Can only consists of `A-Z`, `a-z`, `0-9` and , `-`")
+        return
+
     cli_factory.deploy(prompter=click, function_app_name=_function_app_name)
 
 
