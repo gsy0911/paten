@@ -1,7 +1,7 @@
 Release History
 ===============
 
-0.1.3 (2020-mm-dd)
+0.1.3 (2020-09-08)
 ------------------
 
 * add validation for ``function-app`` name
