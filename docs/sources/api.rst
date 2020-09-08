@@ -1,8 +1,8 @@
 API Reference
 =============
 
-AzFileClient
-------------
+Paten
+-----
 
 .. toctree::
    :maxdepth: 4
