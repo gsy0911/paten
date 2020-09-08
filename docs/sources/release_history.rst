@@ -1,10 +1,6 @@
 Release History
 ===============
 
-.. toctree::
-   :maxdepth: 4
-
-
 0.1.3 (2020-mm-dd)
 ------------------
 
