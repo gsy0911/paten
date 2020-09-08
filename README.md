@@ -3,7 +3,7 @@
 [![pytest](https://github.com/gsy0911/paten/workflows/pytest/badge.svg)](https://github.com/gsy0911/paten/actions?query=workflow%3Apytest)
 [![codecov](https://codecov.io/gh/gsy0911/paten/branch/master/graph/badge.svg)](https://codecov.io/gh/gsy0911/paten)
 [![PythonVersion](https://img.shields.io/badge/python-3.7|3.8-blue.svg)](https://www.python.org/downloads/release/python-377/)
-[![PiPY](https://img.shields.io/badge/pypi-0.1.2-blue.svg)](https://pypi.org/project/paten/)
+[![PiPY](https://img.shields.io/badge/pypi-0.1.3-blue.svg)](https://pypi.org/project/paten/)
 
 
 Paten is a framework for azure functions written in Python. Paten provides:
@@ -38,10 +38,10 @@ You have logged in. Now let us find all the subscriptions to which you have acce
 ## Quickstart
 
 In your project directory, type below.
-Directory {project_name} and example python scripts are created.
+Directory {function_app_name} and example python scripts are created.
 
 ```shell script
-$ paten new-app {project_name}
+$ paten new-app {function_app_name}
 ```
 
 Then, modify `app.py`, like below.
@@ -50,7 +50,7 @@ Then, modify `app.py`, like below.
 import azure.functions as func
 from paten import Paten
 
-app = Paten('{project_name}')
+app = Paten('{function_app_name}')
 
 
 @app.http_trigger('req', methods=['GET'], route='/')
@@ -63,8 +63,14 @@ def example_http_function(req: func.HttpRequest) -> func.HttpResponse:
 
 ```
 
-Finally, to deploy to azure functions, type below in the directory `{project_name}`.
-The files are generated in `./{project_name}/.paten` and your function app is deployed to azure.
+Before deploying to azure functions, you can test your functions on local with the command below.
+
+```shell script
+$ paten local
+```
+
+Finally, to deploy to azure functions, type below in the directory `{function_app_name}`.
+The files are generated in `./{function_app_name}/.paten` and your function app is deployed to azure.
 
 ```shell script
 $ paten deploy

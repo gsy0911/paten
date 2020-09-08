@@ -1,8 +1,10 @@
 import os
+from typing import Optional
 
 import click
 
 from paten.constants import TEMPLATE_APP, GITIGNORE, WELCOME_PROMPT
+from paten.utils import validate_function_app_name
 from .factory import CliFactory
 
 
@@ -29,8 +31,9 @@ def cmd(ctx, function_app_dir: str):
 
 
 @cmd.command("deploy")
+@click.option("--function-app-name")
 @click.pass_context
-def deploy(ctx):
+def deploy(ctx, function_app_name: Optional[str] = None):
     """
     Deploy your app to Azure Functions via `Azure Functions Core Tools`.
     
@@ -39,8 +42,12 @@ def deploy(ctx):
     paten_app = cli_factory.load_paten_app()
     paten_app.export()
 
-    function_app_name = paten_app.function_app_name
-    cli_factory.deploy(prompter=click, function_app_name=function_app_name)
+    _function_app_name = paten_app.function_app_name if function_app_name is None else function_app_name
+    if not validate_function_app_name(function_app_name=_function_app_name):
+        click.echo(f"{_function_app_name} is invalid. Can only consists of `A-Z`, `a-z`, `0-9` and , `-`")
+        return
+
+    cli_factory.deploy(prompter=click, function_app_name=_function_app_name)
 
 
 @cmd.command("build")
@@ -62,14 +69,26 @@ def build(ctx):
 
 
 @cmd.command("local")
-@click.option('--host', default='127.0.0.1')
-@click.option('--port', default=8000, type=click.INT)
+@click.option("--azure-web-jobs-storage", help="Value for the AzureWebJobsStorage.")
+@click.option('--port', default=7071, type=click.INT)
+@click.option('--use-https', is_flag=True)
 @click.pass_context
-def local(ctx, host='127.0.0.1', port=8000):
-    click.echo(f'hosting at local at {host}:{port}')
+def local(ctx, azure_web_jobs_storage: Optional[str], port=7071, use_https=False):
+    """
+    Debug on local
 
+    Args:
+        ctx: shared context on click
+        azure_web_jobs_storage: value for the AzureWebJobsStorage
+        port: listen port
+        use_https: use https
+
+    """
     cli_factory: CliFactory = ctx.obj['factory']
     paten_app = cli_factory.load_paten_app()
+    paten_app.export(azure_web_jobs_storage=azure_web_jobs_storage)
+
+    cli_factory.local(prompter=click, port=port, use_https=use_https)
 
 
 @cmd.command("plan")
@@ -104,20 +123,18 @@ def _create_new_project_skeleton(function_app_name: str):
 
 
 @cmd.command("new-app")
-@click.argument('function_app_name')
+@click.argument('function-app-name')
 def new_app(function_app_name: str):
     """
     Create new Function App with sample python script.
     
     """
+    if not validate_function_app_name(function_app_name=function_app_name):
+        click.echo(f"{function_app_name} is invalid. Can only consists of `A-Z`, `a-z`, `0-9` and , `-`")
+        return
     click.echo(WELCOME_PROMPT % function_app_name)
     _create_new_project_skeleton(function_app_name=function_app_name)
 
 
 def main():
-    # コンテキストから参照するアトリビュートを渡す
     cmd(obj={})
-
-
-if __name__ == '__main__':
-    main()
