@@ -103,13 +103,31 @@ The files are generated in ``./{function_app_name}/.paten`` and your function ap
    $ paten deploy
 
 
-For Users
-=========
+The User Guid
+=============
+
+Tutorial
+---------
+
+To get started, it is recommended to follow the document below.
+
+.. toctree::
+   :maxdepth: 2
+
+   sources/tutorial
+
+
+API Documentation
+-----------------
 
 .. toctree::
    :maxdepth: 2
 
    sources/api
+
+.. toctree::
+   :maxdepth: 1
+
    sources/release_history
 
 GitHub
