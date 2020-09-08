@@ -203,9 +203,29 @@ class Paten:
         return _wrapper
 
     def out_http(self, name: Optional[str] = "$return"):
+        """
+        Add http bind.
+
+        Args:
+            name: A name for the argument, by default `$return`
+
+        Returns:
+
+        """
         return self.out_bind(name=name, _type="http", is_arg_name_check=False)
 
     def out_queue(self, name: str, queue_name: str, connection: Optional[str] = None):
+        """
+        Add queue bind.
+
+        Args:
+            name: A name for the argument, usually `msg`.
+            queue_name: A name for the Queue Storage where the `msg` enqueue or dequeue.
+            connection: A connection for the Queue Storage, by default `AzureWebJobsStorage`.
+
+        Returns:
+
+        """
         return self.out_bind(
             name=name,
             _type="queue",
